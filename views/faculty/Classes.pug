@@ -1,0 +1,22 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderTeacher
+    a(href=`/faculty/add/class` style='margin:0 50px;')= `Add Class `
+        i(class='fa fa-angle-right' aria-hidden="true")
+        i(class='fa fa-angle-right' aria-hidden="true")
+    hr(style='margin:9px 0;')
+
+    if msg === ''
+        .grid_con
+            -classes.forEach(cls => {
+                .class
+                    a(href=`/faculty/class/${cls._id}` style='color:#000; font-size: 1.4rem;font-weight: bold;')= cls.subject
+                    p= `${cls.department} - ${cls.section} (Batch ${cls.batch})`
+                    p= `Semester: ${cls.semester}`
+                    p= `Code: ${cls.code}`
+                    p= `Students: ${cls.students.length}`
+            -})
+    
+    else 
+        h1(class='error' style='margin:0 30px ;')= msg
+//- padding:10px; color:#fff; background:#000;

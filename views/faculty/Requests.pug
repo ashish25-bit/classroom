@@ -1,0 +1,19 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderTeacher
+    
+    if msg !== ''
+        h1(class='error' style='margin:0 30px ;')= msg
+
+    else
+        .requests_con    
+            h1 REQUESTS
+            -requests.forEach(request => {
+                .request
+                    h2= request.subject
+                    p= `Code: ${request.code}`
+                    p(style='font-size: 20px; color:#6d6c6c;')= `Total Pending Requests: ${request.requests.length}`
+                    a(href=`/faculty/request/${request._id}`) See Requests 
+                        i(class='fa fa-angle-right' aria-hidden="true")
+                        i(class='fa fa-angle-right' aria-hidden="true")
+            -})

@@ -1,0 +1,291 @@
+/* basic styling */
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    box-sizing: border-box;
+}
+body, input, button, ::placeholder {
+    font-family: 'Poppins', sans-serif;
+}
+input, a, button, select {
+    outline: none;
+}
+a {
+    text-decoration: none;
+}
+button {
+    cursor: pointer;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.engaged {
+    opacity: 0.6;
+}
+
+/* 
+    Header
+*/
+.header {
+    padding: 15px 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    background: #3DAD8F;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.nav_link {
+    margin: 0 5px;
+    color: #fff;
+    padding: 5px;
+    background-color: #fff;
+    color: #3DAD8F;
+}
+
+/* 
+    Response Message
+*/
+.response_msg{
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+}
+
+.response_msg_active {
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px 20px;
+    user-select: none;
+    animation: response 5s ease;
+}
+
+@keyframes response {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1; 
+    }
+}
+
+/* 
+    Signup nad Login Form
+*/
+.login_sign_con {
+    width: 100%;
+    height: 100vh;
+    background: #3DAD8F;
+    background-image: url('../assets/Bg.png');
+    background-size: cover;
+}
+.form_head {
+    margin: 0 30px;
+    font-size: 3rem;
+    text-transform: uppercase; 
+    position: relative;
+    top: 30px;
+    color: #fff;
+}
+.form_container {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    border-radius: 20px;
+    width: 600px;
+}
+.form_container .field, .add_class_form .field {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    flex: 1;
+}
+.form_container .field2, .add_class_form .field2 {
+    display: flex;
+}
+.form_container .field2 .field:nth-child(1), .add_class_form .field2 .field:nth-child(1) {
+    margin-right: 10px;
+}
+.form_container .field label {
+    font-size: 14px;
+    color: #095863;
+    margin-left: 10px;
+}
+.form_container .field input, .form_container .field2 select,
+.add_class_form .field input, .add_class_form .field2 select, .add_class_form .field select {
+    border: 1.2px solid #aaa;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: #fff
+}
+.form_container .btn_con, .add_class_form .btn_con {
+    text-align: center;
+    margin-top: 15px;
+}
+.form_container .btn_con button, .add_class_form .btn_con button {
+    width: 100%;
+    border: none;
+    background: #52d8a7;
+    color: white;
+    text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 1.4px;
+    padding: 5px 0;
+    border-radius: 20px;
+    font-weight: bolder;
+}
+.form_container section {
+    text-align: center;
+    margin: 10px 0;
+    color: red;
+}
+.form_container .extra {
+    display: flex;    
+    margin-top: 15px;
+}
+.form_container .extra a {
+    display: block;
+    flex: 1;
+    text-align: center;
+    background: #04395E;
+    margin: 0 5px;
+    color: white;
+}
+
+/*
+    Add Classes For teacher
+*/
+.add_class_form {
+    width: 500px;
+    padding: 20px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    border-radius: 20px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.add_class_form .field label {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #757575;
+}
+.add_class_form a {
+    color: #000;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.add_class_form a .fa-arrow-left {
+    padding: 10px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+}
+/* 
+    Home page faculty
+*/
+.grid_con {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 10px 30px;
+}
+.grid_con .class {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+    margin: 10px;
+    padding: 20px;
+    border-radius: 20px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.grid_con .class::before {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    border-radius: 0 20px 20px 0;
+    -webkit-mask-image: radial-gradient(60% 100% at left, transparent 50%, #fff 100%);
+    mask-image: radial-gradient(50% 100% at left, transparent 50%, #fff 100%);
+    background: #3dad8f85;
+}
+.register_cls {
+    padding: 6px 10px;
+    margin-top: 10px;
+    position: absolute;
+    right: -50%;
+    top: 30%;
+    transition: 0.5s right ease;
+    background: #3e9281;
+    color: white;
+    text-transform: uppercase;
+    border-radius: 15px;
+    border: none;
+}
+.grid_con .class:hover .register_cls {
+    right: 10px;
+}
+.grid_con .class:hover {
+    box-shadow: 0 0 9px rgba(0, 0, 0, 0.7);
+}
+
+/* 
+    Home Page student
+*/
+.search_container {
+    text-align: center;
+    width: 550px;
+    margin: 30px auto;
+}
+.search_container input {
+    padding: 8px 15px;
+    width: 80%;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin: 0 5px;
+}
+.search_container button {
+    padding: 8px 10px;
+    border-radius: 20px;
+    border: none;
+    color: #fff;
+    background: #095863;
+}
+
+/* 
+    Class and Requests
+*/
+#cid {
+    display: none;
+}
+.class_det, .requests_con {
+    width: 80%;
+    margin: 0 auto;
+}
+.class_det  .students_con {
+    margin: 10px 0;
+}
+.class_det  .students_con .student, .requests_con .request {
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    margin: 10px 0;
+    border-radius: 10px;
+    position: relative;
+}
+.requests_con .request .cancel, .class_det  .students_con .student button {
+    padding: 6px 10px;
+    margin-top: 10px;
+    background: #3e9281;
+    color: white;
+    text-transform: uppercase;
+    border-radius: 15px;
+    border: none;
+}

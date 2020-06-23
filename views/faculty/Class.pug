@@ -1,0 +1,24 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderTeacher
+
+    if error !== ''
+        h1(class='error' style='margin:0 30px ;')= error
+
+    else 
+        .class_det
+            h1= cls.subject
+            p= `Class Strength: ${cls.students.length}`
+            if cls.requests.length
+                p= `Requests Pending: ${cls.requests.length}`
+                a(href=`/faculty/request/${cls._id}`)= `Attend the requests `
+                    i(class='fa fa-angle-right' aria-hidden="true")
+                    i(class='fa fa-angle-right' aria-hidden="true")
+        
+            
+            .students_con 
+                h2 Loading...
+
+            p(id='cid' data-class-id=`${cls._id}`)
+
+    script(src="js/class.js")

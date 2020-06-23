@@ -1,0 +1,104 @@
+extends ../layouts/Layout
+block content
+
+    - var departments = [ 'CSE', 'CSE-IT', 'CSE-SWE', 'CSE-AI', 'CSE-BD', 'MECH', 'ECE-1', 'ECE-2', 'EEE', 'AUTOMOBILE', 'MECHATRONICS', 'AEROSPACE' ]
+    - var semesters = [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+    - var sections = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2', 'E1', 'E2', 'F1', 'F2', 'G1', 'G2', 'H1', 'H2', 'I1', 'I2']
+
+    .login_sign_con
+        h2.form_head Student Register
+
+        form(method='POST' class='form_container')
+            h2(style='color:#fff;') REGISTER
+
+            //- name input field
+            .field
+                label Name
+                input(
+                    type="text" 
+                    class='name_input' 
+                    name="name" 
+                    autocomplete='off' 
+                    value='Ashish Yoel'
+                    required
+                )
+
+            //- email input field
+            .field
+                label Email
+                input(
+                    type="email" 
+                    class='email_input' 
+                    name="email" 
+                    autocomplete='off'
+                    value='ay4645@srmist.edu.in' 
+                    required
+                )
+                small(style='font-size:12px; color:#095863; margin-left:10px;') SRM EMAIL is required
+
+            //- password field
+            .field 
+                label Password
+                input(
+                    type="password" 
+                    class='pwd_input' 
+                    name="password" 
+                    value='12345'
+                    required
+                )
+
+            //- Registeration Number
+            .field
+                label Registeration Number
+                input(
+                    type="text"
+                    class='regno_input'
+                    name="regno"
+                    value='RA1811003010635' 
+                    required
+                )
+
+            .field2
+                .field
+                    label Department
+                    select(name='department' value='' class='department' )
+                        option(value='') Select Your Department Here
+                        -departments.forEach(department => {
+                            option(value=department)= department
+                        -})
+
+                .field
+                    label Semester
+                    select(name="semester" class='semester' value='' )
+                        option(value='') Select Your Id Here
+                        -semesters.forEach(semester => {
+                            option(value=semester)= semester
+                        -})
+
+            .field2
+                .field
+                    label Section
+                    select(name='section' value='' class='section' )
+                        option(value='') Select Your Department Here
+                        -sections.forEach(section => {
+                            option(value=section)= section
+                        -})
+
+                .field
+                    label Batch
+                    select(name="batch" class='batch' value='' )
+                        option(value='') Select The Batch Here
+                        option(value=1)= 1
+                        option(value=2)= 2
+
+            .btn_con
+                button(type="submit") Register
+
+            section= error
+
+            .extra  
+                a(href="/") Login Instead?
+                a(href='/faculty/login') Faculty's Login
+                a(href='/faculty/signup') Faculty's Register
+
+            script(src="js/signup2.js")

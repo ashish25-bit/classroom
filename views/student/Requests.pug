@@ -1,0 +1,20 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderStudent
+    
+    p.response_msg
+    if msg !== ''
+        h1(style='margin:0 30px ;')= msg
+
+    else 
+        .requests_con 
+            h1 REQUESTS
+            -cls.forEach(request => {
+                .request
+                    h2= request.subject
+                    p= `Code: ${request.code}`
+                    p= `Faculty: ${request.teacher.name} (${request.teacher.faculty_id})`
+                    button(class='cancel' data-class-id=request._id) Cancel Request
+            -})
+
+    script(src="js/request2.js")

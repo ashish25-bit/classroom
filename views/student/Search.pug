@@ -1,0 +1,26 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderStudent
+
+    p.response_msg
+    //- search form
+    include ../layouts/SearchForm
+
+    if error !== ''
+        h1(class='error' style='margin:0 30px ;')= error
+
+    else
+        .grid_con
+            -classes.forEach(cls => {
+                .class
+                    h2= cls.subject
+                    p= `Faculty: (${cls.teacher.faculty_id}) ${cls.teacher.name}`
+                    p= `Code: ${cls.code}`
+                    p= `Unique Id: ${cls.name}`
+                    button(data-class-id=cls._id class='register_cls' disabled)
+            -})
+    
+    script
+        | var classes = !{JSON.stringify(user.requests)};
+    script(src="js/search.js")
+    script(src="js/searchjs.js")

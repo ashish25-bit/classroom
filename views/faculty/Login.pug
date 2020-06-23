@@ -1,0 +1,43 @@
+extends ../layouts/Layout
+block content
+
+    .login_sign_con
+        h2.form_head Faculty Login
+
+        form(method='POST' class=`form_container ${action}`)
+            h2(style='color:#fff;') LOGIN
+
+            //- email input field
+            .field
+                label Email
+                input(
+                    type="email" 
+                    class='email_input' 
+                    name="email" 
+                    autocomplete='off'
+                    value='ay4645@srmist.edu.in' 
+                    required
+                )
+
+            //- password field
+            .field 
+                label Password
+                input(
+                    type="password" 
+                    class='pwd_input' 
+                    name="password" 
+                    value='12345'
+                    required
+                )
+            
+            .btn_con
+                button(type="submit") Login
+
+            section= error
+
+            .extra  
+                a(href="/faculty/signup") Signup Instead?
+                a(href='/') Student's Login
+                a(href='/register') Student's Register
+
+    script(src="js/login.js")

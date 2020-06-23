@@ -1,0 +1,85 @@
+extends ../layouts/Layout
+block content
+
+    - var departments = [ 'CSE', 'CSE-IT', 'CSE-SWE', 'CSE-AI', 'CSE-BD', 'MECH', 'ECE-1', 'ECE-2', 'EEE', 'AUTOMOBILE', 'MECHATRONICS', 'AEROSPACE' ]
+    - var faculty_id = [ 10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010 ]
+
+    .login_sign_con
+        h2.form_head Faculty Register
+
+        form(method='POST' class='form_container')
+            h2(style='color:#fff;') REGISTER
+            //- name input field
+            .field
+                label Name
+                input(
+                    type="text" 
+                    class='name_input' 
+                    name="name" 
+                    autocomplete='off' 
+                    value='Teacher'
+                    required
+                )
+
+            //- email input field
+            .field
+                label Email
+                input(
+                    type="email" 
+                    class='email_input' 
+                    name="email" 
+                    autocomplete='off'
+                    value='ay4645@srmist.edu.in' 
+                    required
+                )
+                small(style='font-size:12px; color:#095863; margin-left:10px;') SRM EMAIL is required
+
+            //- password field
+            .field 
+                label Password
+                input(
+                    type="password" 
+                    class='pwd_input' 
+                    name="password" 
+                    value='12345'
+                    required
+                )
+
+            .field2
+                .field
+                    label Faculty Id
+                    select(name="faculty_id" class='faculty_id' value='' )
+                        option(value='') Select Your Id Here
+                        -faculty_id.forEach(id => {
+                            option(value=id)= id
+                        -})
+                
+                .field
+                    label Department
+                    select(name='department' value='' class='department' )
+                        option(value='') Select Your Department Here
+                        -departments.forEach(department => {
+                            option(value=department)= department
+                        -})
+
+            .field
+                label Teaching Position
+                input(
+                    type="text"
+                    class='pos_input'
+                    name="position"
+                    value='Assistant Professor' 
+                    required
+                )
+            
+            .btn_con
+                button(type="submit") Register
+
+            section= error
+
+            .extra  
+                a(href="/faculty/login") Login Instead?
+                a(href='/') Student's Login
+                a(href='/register') Student's Register
+
+    script(src="js/signup.js")

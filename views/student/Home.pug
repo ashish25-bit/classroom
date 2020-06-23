@@ -1,0 +1,18 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderStudent
+
+    include ../layouts/SearchForm
+
+    if msg === ''
+        .grid_con
+            - classes.forEach(cls => {
+                .class
+                    h2= cls.subject
+                    p= `Faculty: (${cls.teacher.faculty_id}) ${cls.teacher.name}`
+            -})
+
+    else 
+        h1(class='error' style='margin:0 30px ;')= msg
+
+    script(src="js/search.js")
