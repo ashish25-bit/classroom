@@ -18,5 +18,5 @@ btn.addEventListener('click', e => {
 function search(key) {
     btn.style.opacity = '0.5'
     btn.disabled = true
-    location.replace(`/class/search/${key}`)
+    location.replace(`/search/class?q=${key}`)
 }

@@ -7,7 +7,7 @@ const section = document.querySelector('.section')
 const subject = document.querySelector('.subject')
 const code = document.querySelector('.code')
 const form = document.querySelector('.add_class_form')
-const labels = document.querySelectorAll('.field label') 
+const labels = document.querySelectorAll('.field label')
 let response_msg = document.querySelector('.response_msg')
 
 { name.disabled = true; subject.disabled = true; code.disabled = true }
@@ -104,53 +104,59 @@ function showResponse(msg) {
     }, 5000)
 }
 
-department.addEventListener('change', changeName)
 section.addEventListener('change', changeName)
 batch.addEventListener('change', changeName)
+
+department.addEventListener('change', e => {
+    changeName()
+    addSubjects()
+})
+
+semester.addEventListener('change', e => {
+    changeName()
+    addSubjects()
+})
+
+subject.addEventListener('change', e => {
+    const index = subject.selectedIndex
+    code.value = subject.options[index].getAttribute('code')
+    changeName()
+})
 
 function changeName() {
     let generate = ''
     generate += !code.value ? '' : code.value
     generate += !department.value ? '' : `-${department.value}`
     generate += !section.value ? '' : `-${section.value}`
+    generate += !semester.value ? '' : `-${semester.value}`
     generate += !batch.value ? '' : `-Batch${batch.value}`
     name.value = generate
 }
 
-semester.addEventListener('change', e => {
-    // call to fetch the subject name and the subject code
-    if (e.target.value) {
-        axios.get(`/api/code/subject/${e.target.value}`)
-            .then(res => {
-                if (res.data.length) {
-                    subject.disabled = false
-                    subject.innerHTML = ''
-                    code.value = ''
-                    makeNode('', 'Select Your Course Here.', '')
-                    code.placeholder = ''
-                    res.data.forEach(course => {
-                        const { name, code } = course
-                        makeNode(name, name, code)
-                    })
-                }
-            })
-            .catch(err => console.log(err))
-    }
-
-    else {
-        subject.disabled = true; subject.disabled = true
-        subject.innerHTML = `<option value="">Select The Semester first</option>`
-        code.placeholder = 'Select The Semester first'
+function addSubjects() {
+    if (!semester.value || !department.value) {
+        subject.innerHTML = '<option>Select The Semester and The Department first</option>'
         code.value = ''
-        changeName()
+        code.placeholder = 'Select The Semester and The Department first'
+        return
     }
-})
 
-subject.addEventListener('change', () => {
-    const index = subject.selectedIndex
-    code.value = subject.options[index].getAttribute('code')
-    changeName()
-})
+    axios.get(`/api/code/subject/${semester.value}/${department.value}`)
+        .then(res => {
+            if (res.data.length) {
+                subject.disabled = false
+                subject.innerHTML = ''
+                code.value = ''
+                makeNode('', 'Select Your Course Here.', '')
+                code.placeholder = 'Course Code will automatically filled on selecting the course.'
+                res.data.forEach(course => {
+                    const { name, code } = course
+                    makeNode(name, name, code)
+                })
+            }
+        })
+        .catch(err => console.log(err))
+}
 
 function makeNode(value, text, attribute) {
     const option = document.createElement('option')
@@ -167,6 +173,6 @@ function emptyInput(element) {
 }
 
 function removeClass() {
-    for(label of labels)
+    for (label of labels)
         label.style.color = '#757575'
 }

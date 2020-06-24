@@ -1,0 +1,25 @@
+extends ../layouts/Layout
+block content
+
+    if type === 'student' 
+        include ../layouts/HeaderStudent
+    else 
+        include ../layouts/HeaderTeacher
+
+    if error !== ''
+        h1(class='error' style='margin:0 30px ;')= error
+
+    else 
+        .class_det
+            h1= cls.subject
+            p= `Class Strength: ${cls.students.length}`
+            if type === 'teacher' && cls.requests.length
+                p= `Requests Pending: ${cls.requests.length}`
+                a(href=`/faculty/request/${cls.name}`)= `Attend the requests `
+                    i(class='fa fa-angle-right' aria-hidden="true")
+                    i(class='fa fa-angle-right' aria-hidden="true")
+
+            .students_con
+                h2 Loading...
+    
+        script(src="js/class.js")

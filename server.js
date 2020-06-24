@@ -17,11 +17,12 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, '/public')))
 app.use('/faculty', express.static('public'))
 app.use('/chat', express.static('public'))
-app.use('/class/search', express.static('public'))
+app.use('/search', express.static('public'))
 app.use('/faculty/add', express.static('public'))
 app.use('/faculty/class', express.static('public'))
 app.use('/faculty/register', express.static('public'))
 app.use('/faculty/request', express.static('public'))
+app.use('/classroom', express.static('public'))
 
 //set template engine 
 app.set('views', path.join(__dirname, 'views'))
@@ -45,7 +46,7 @@ app.use(session({
 app.use('/', require('./routes/student'))
 app.use('/faculty', require('./routes/faculty'))
 app.use('/api', require('./routes/api'))
-app.use('/chat', require('./routes/chat'))
+app.use('/classroom', require('./routes/classroom'))
 
 //errors
 app.use((req, res, next) => {

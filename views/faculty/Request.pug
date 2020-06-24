@@ -10,7 +10,7 @@ block content
             h1= cls.subject
             p= `Class Strength: ${cls.students.length}`
             p= `Requests Pending: ${cls.requests.length}`
-            a(href=`/faculty/class/${cls._id}`)= `Go To Class `
+            a(href=`/classroom/${cls.name}`)= `Go To Class `
                 i(class='fa fa-angle-right' aria-hidden="true")
                 i(class='fa fa-angle-right' aria-hidden="true")
 

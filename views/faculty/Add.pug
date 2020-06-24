@@ -2,11 +2,6 @@ extends ../layouts/Layout
 block content
     include ../layouts/HeaderTeacher
 
-    //- department
-    - var departments = [ 'CSE', 'CSE-IT', 'CSE-SWE', 'CSE-AI', 'CSE-BD', 'MECH', 'ECE-1', 'ECE-2', 'EEE', 'AUTOMOBILE', 'MECHATRONICS', 'AEROSPACE' ]
-    - var semesters = [ 1, 2, 3, 4, 5, 6, 7, 8 ]
-    - var sections = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2', 'E1', 'E2', 'F1', 'F2', 'G1', 'G2', 'H1', 'H2', 'I1', 'I2']
-
     p.response_msg
     h2(class='form_head' style='color:#000;') Add Class
 
@@ -53,8 +48,9 @@ block content
                 label *Batch
                 select(name='batch' value='' class='batch' )
                     option(value='') Select The Batch Here
-                    option(value=1)= 1
-                    option(value=2)= 2
+                    -batches.forEach(batch => {
+                        option(value=batch)= batch
+                    -})
 
             //- Section
             .field
@@ -69,7 +65,7 @@ block content
         .field
             label *Subject
             select(name="subject" class='subject')
-                option(value='') Select The Semester first
+                option(value='') Select The Semester and Department first
 
         //- subject code
         .field
@@ -79,7 +75,7 @@ block content
                 class='code'
                 name='code'
                 autocomplete='off'
-                placeholder='Select the semester first'
+                placeholder='Select the semester and department first'
             )
 
         small(style='font-size:12px; color:#757575; margin-left:10px;') Fields Marked with '*' are mandotary

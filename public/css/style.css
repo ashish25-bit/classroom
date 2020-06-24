@@ -230,11 +230,30 @@ input::-webkit-inner-spin-button {
     border-radius: 15px;
     border: none;
 }
-.grid_con .class:hover .register_cls {
+.grid_con .class:hover .register_cls, .grid_con .class:hover .classes_btn_con {
     right: 10px;
 }
 .grid_con .class:hover {
     box-shadow: 0 0 9px rgba(0, 0, 0, 0.7);
+}
+
+.classes_btn_con {
+    position: absolute;
+    top: 20%;
+    right: -50%;
+    transition: 0.5s right ease;
+}
+.classes_btn_con  a {
+    padding: 6px 10px;
+    background: #3e9281;
+    color: white;
+    text-transform: uppercase;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    display: block;
+    margin: 10px 0;
+    text-align: center;
 }
 
 /* 

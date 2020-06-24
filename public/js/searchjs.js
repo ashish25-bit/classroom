@@ -5,9 +5,17 @@ const config = {
     }
 }
 let response_msg = document.querySelector('.response_msg')
+let classes = []
 
 // checking the register status
-window.onload = () => { addText() }
+window.onload = () => { 
+    axios.get('/api/get/requests')
+        .then(res => {
+            classes = res.data
+            addText() 
+        })
+        .catch(err => console.log(err))
+}
 
 buttons.forEach(button => {
     button.addEventListener('click', e => {

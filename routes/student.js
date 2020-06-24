@@ -11,7 +11,6 @@ const Student = require('../models/Student')
 const Class = require('../models/Class')
 const { student } = require('../secret')
 const authUser = require('../middleware/authUser')
-const { request } = require('http')
 
 // for body parser
 app.use(express.urlencoded({ extended: false }))
@@ -199,12 +198,14 @@ router.get('/home', authUser, async (req, res) => {
 })
 
 // searched class
-router.get('/class/search/:key', async (req, res) => {
+router.get('/search/class', authUser, async (req, res) => {
 
     if (!req.session.user)
         return res.redirect('/')
 
-    const { key } = req.params
+    console.log(req._parsedOriginalUrl)
+
+    const { q: key } = req.query
 
     try {
         const regex = new RegExp(escapeRegex(key), 'i')
@@ -255,10 +256,10 @@ router.get('/requests', authUser, async (req, res) => {
         return res.redirect('/')
 
     try {
-        const { requests } = req.session.user 
+        const { requests } = req.session.user
         const cls = await Class.find({ _id: { $in: requests } }).populate('teacher', ['name', 'faculty_id']).select(['subject', 'code'])
 
-        if(!cls.length)
+        if (!cls.length)
             return res.render('student/Requests', {
                 title: `No Requested Courses`,
                 user: req.session.user,

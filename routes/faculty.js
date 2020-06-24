@@ -9,7 +9,7 @@ const app = express()
 const mailer = require('../private/nodemailer')
 const Teacher = require('../models/Teacher')
 const Class = require('../models/Class')
-const { teacher } = require('../secret')
+const { teacher, departments, sections, semesters, batches } = require('../secret')
 const authUser = require('../middleware/authUser')
 
 // setting the static folder
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = user
         req.session.type = teacher
-        res.redirect(`/faculty/requests`)
+        res.redirect(`/classroom/18DEV001J-CSE-C2-5-Batch2`)
     }
     catch (err) {
         console.log(err)
@@ -188,49 +188,11 @@ router.get('/add/class', authUser, (req, res) => {
     res.render('faculty/Add', {
         title: 'Add Class',
         user: req.session.user,
+        departments,
+        semesters,
+        sections,
+        batches
     })
-})
-
-// get each class
-router.get('/class/:id', authUser, async (req, res) => {
-    if (!req.session.user)
-        return res.redirect('/')
-
-    const { id } = req.params
-    try {
-        const cls = await Class.findOne({ _id: id })
-
-        if (!cls)
-            return res.renderer('faculty/Class', { 
-                title: 'No Result', 
-                user: req.session.user, 
-                cls: {}, 
-                error: 'No Class Found' 
-            })
-
-        res.render('faculty/Class', { 
-            title: `${cls.code} ${cls.subject}`, 
-            user: req.session.user, 
-            cls, 
-            error: '' 
-        })
-    }
-    catch (err) {
-        console.log(err)
-        res.render('faculty/Class', {
-            title: `Error`, 
-            user: req.session.user, 
-            cls: {},
-            error: 'There was an error in retrieving class details. Go back and try again'
-        })
-
-        res.render('faculty/Class', {
-            title: `Error`,
-            user: req.session.user,
-            cls: {},
-            error: 'There was an error in retrieving class details. Go back and try again'
-        })
-    }
 })
 
 // get the requests page
@@ -259,7 +221,7 @@ router.get('/requests', authUser, async (req, res) => {
         })
     }
     catch (err) {
-        res.render('faculty/Requests', { 
+        res.render('faculty/Requests', {
             title: 'Requests', 
             user: req.session.user, 
             requests: [],
@@ -269,24 +231,24 @@ router.get('/requests', authUser, async (req, res) => {
 })
 
 // get the requests for a particular course
-router.get('/request/:id', authUser, async (req, res) => {
+router.get('/request/:name', authUser, async (req, res) => {
     if(!req.session.user)
         return res.redirect('/')
     
     try {
-        const { id } = req.params
-        const cls = await Class.findOne({ _id: id }).select(['-name, -students, -batch, -teacher'])
+        const { name } = req.params
+        const cls = await Class.findOne({ name }).select(['-name, -students, -batch, -teacher'])
         
         if(!cls)
             return res.render('faculty/Request', {
-                title: 'Request For A Class',
+                title: `No class found`,
                 user: req.session.user,
                 cls: {},
                 msg: 'No Class Found',
             })
 
         res.render('faculty/Request', {
-            title: 'Request For A Class',
+            title: `Requests for ${cls.subject}`,
             user: req.session.user,
             cls,
             msg: '',
@@ -295,7 +257,7 @@ router.get('/request/:id', authUser, async (req, res) => {
     catch (err) {
         console.log(err)
         res.render('faculty/Request', {
-            title: 'Request For A Class',
+            title: 'Server Error',
             user: req.session.user,
             cls: {},
             msg: 'Server Error',

@@ -5,9 +5,16 @@ const subjects = require('../private/subjects')
 const Class = require('../models/Class')
 
 // get the options for subject and subject code
-router.get('/code/subject/:semester', (req, res) => {
-    const { semester } = req.params
-    res.send(subjects[semester])
+router.get('/code/subject/:semester/:dept', (req, res) => {
+    try {
+        const { semester, dept } = req.params
+        const department = subjects[dept]
+        const courses = department[semester]
+        res.send(courses)
+    } 
+    catch (err) {
+        console.log(err)
+    }
 })
 
 router.post('/add/class', async (req, res) => {
@@ -17,6 +24,11 @@ router.post('/add/class', async (req, res) => {
     batch = parseInt(batch)
 
     try {
+
+        const cls = await Class.findOne({ name: name })
+        if(cls)
+            return res.send('Someone has already registered for this class.')
+
         const newClass = new Class({
             teacher: req.session.user._id,
             name,
@@ -73,12 +85,12 @@ router.post('/request/class', async (req, res) => {
 })
 
 // get the students for a class
-router.get('/class/students/:id', async (req, res) => {
+router.get('/class/students/:name', async (req, res) => {
     if (req.session.user) {
-        const { id } = req.params
+        const { name } = req.params
         try {
-            const cls = await Class.findOne({ _id: id })
-            const students = await Student.find({ "_id": { $in: cls.students } }).select(['-password', '-email', '-date', '-classes'])
+            const cls = await Class.findOne({ name })
+            const students = await Student.find({ _id: { $in: cls.students } }).select(['-password', '-email', '-date', '-classes', '-requests'])
             res.json({ students, error: '' })
         }
         catch (err) {
@@ -124,6 +136,20 @@ router.put('/accept/course/request', async (req, res) => {
     catch (err) {
         console.log(err)
         res.send('Error')
+    }
+})
+
+// get the requests
+router.get('/get/requests', async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+    
+    try {
+        const user = await Student.findOne({ _id: req.session.user._id })
+        res.send(user.requests)
+    } 
+    catch (err) {
+        console.log(err)
     }
 })
 

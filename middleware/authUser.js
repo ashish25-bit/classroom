@@ -1,4 +1,4 @@
-const { student, teacher, teacherRoutes, studentRoutes } = require('../secret')
+const { student, teacher, teacherRoutes, studentRoutes, commonRoutes } = require('../secret')
 
 module.exports = (req, res, next) => {
     const { type } = req.session
@@ -11,15 +11,15 @@ module.exports = (req, res, next) => {
     console.log(pathname)
 
     // student tries to access faculty route
-    if(type === student) {
-        if(!studentRoutes.includes(pathname)) {
+    if (type === student) {
+        if (!studentRoutes.includes(pathname) && !commonRoutes.includes(pathname)) {
             console.log('Student tried to access faculty route')
             return res.redirect('/home')
         }
     }
     // teacher tries to access student route
-    if(type === teacher) {
-        if(!teacherRoutes.includes(pathname)) {
+    if (type === teacher) {
+        if (!teacherRoutes.includes(pathname) && !commonRoutes.includes(pathname)) {
             console.log('Faculty tried to access student route')
             return res.redirect('/faculty/home')
         }

@@ -13,7 +13,7 @@ block content
                     h2= request.subject
                     p= `Code: ${request.code}`
                     p(style='font-size: 20px; color:#6d6c6c;')= `Total Pending Requests: ${request.requests.length}`
-                    a(href=`/faculty/request/${request._id}`) See Requests 
+                    a(href=`/faculty/request/${request.name}`) See Requests 
                         i(class='fa fa-angle-right' aria-hidden="true")
                         i(class='fa fa-angle-right' aria-hidden="true")
             -})
