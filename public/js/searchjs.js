@@ -1,52 +1,69 @@
-const buttons = document.querySelectorAll('.register_cls')
 const config = {
     headers: {
         'Content-Type': 'application/json'
     }
 }
 let response_msg = document.querySelector('.response_msg')
-let classes = []
+const container = document.querySelector('.grid_con')
 
-// checking the register status
-window.onload = () => { 
-    axios.get('/api/get/requests')
+const { q } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
+window.onload = () => {
+    axios.get(`/api/search/${q}`)
         .then(res => {
-            classes = res.data
-            addText() 
+            const { classes, error, requests } = res.data
+            if (error) {
+                container.innerHTML = `<h2>${error}/h2>`
+                return
+            }
+            if (!classes.length) {
+                container.innerHTML = `<div style='font-size:1.5rem;'>No results for: <span style='font-weight: bold;'>${q}</span></div>`
+                return
+            }
+
+            container.innerHTML = ''
+
+            classes.forEach(cls => {
+                const { _id, subject, teacher, name, code } = cls
+                const div = document.createElement('div')
+                div.classList.add('class')
+                div.innerHTML = `<h2>${subject}</h2>
+                <p>Faculty: ${teacher.name} (${teacher.faculty_id})</p> 
+                <p>Code: ${code}</p> <p>UniqueId: ${name}</p>`
+
+                const button = document.createElement('button')
+                button.innerText = requests.includes(_id) ? 'REQUESTED' : 'REQUEST'
+                button.setAttribute('data-class-id', _id)
+                button.classList.add('register_cls')
+                button.addEventListener('click', requestCourse)
+
+                div.appendChild(button)
+                container.appendChild(div)
+            })
+
         })
-        .catch(err => console.log(err))
+        .catch(err => container.innerHTML = `<h2>${err}/h2>`)
 }
 
-buttons.forEach(button => {
-    button.addEventListener('click', e => {
-        button.style.opacity = 0.5
-        button.disabled = true
-        const id = button.getAttribute('data-class-id')
-        axios.post('/api/request/class', { id }, config)
-            .then(res => {
-                const { cls, msg } = res.data
-                classes = cls
-                button.style.opacity = 1
-                button.disabled = false
-                if (msg !== 'Server Error')
-                    addText()
-                showResponse(msg)
-            })
-            .catch(err => {
-                console.log(err)
-                button.style.opacity = 1
-                button.disabled = false
-                showResponse('Server Error')
-            })
-    })
-})
-
-function addText() {
-    buttons.forEach(button => {
-        let id = button.getAttribute('data-class-id')
-        button.disabled = false
-        button.innerText = classes.includes(id) ? 'Requested' : 'Request'
-    })
+function requestCourse(e) {
+    const button = e.target
+    const id = button.getAttribute('data-class-id')
+    button.classList.add('engaged')
+    button.disabled = true
+    axios.post('/api/request/class', { id }, config)
+        .then(res => {
+            button.disabled = false
+            button.classList.remove('engaged')
+            if(res.status == 200) {
+                button.innerText =  button.innerText === 'REQUESTED' ? 'REQUEST' : 'REQUESTED'
+                showResponse(res.data)
+            }
+        })
+        .catch(err => {
+            button.disabled = false
+            button.classList.remove('engaged')
+            showResponse(err)
+        })
 }
 
 function showResponse(msg) {

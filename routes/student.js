@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
         req.session.user = user
         req.session.type = student
-        res.redirect(`/requests`)
+        res.redirect(`/search/class?q=cse`)
     }
     catch (err) {
         console.log(err)
@@ -198,56 +198,16 @@ router.get('/home', authUser, async (req, res) => {
 })
 
 // searched class
-router.get('/search/class', authUser, async (req, res) => {
+router.get('/search/class', authUser, (req, res) => {
 
     if (!req.session.user)
         return res.redirect('/')
 
-    console.log(req._parsedOriginalUrl)
-
-    const { q: key } = req.query
-
-    try {
-        const regex = new RegExp(escapeRegex(key), 'i')
-
-        // searching for the classes which student is not a part of..
-        // the requested courses will be shown
-        const classes = await Class.find({
-            $and: [
-                {
-                    $or: [
-                        { name: { $regex: regex } },
-                        { subject: { $regex: regex } },
-                    ]
-                },
-                { _id: { $nin: req.session.user.classes } }
-            ]
-        }).populate('teacher', ['name', 'faculty_id'])
-
-        if (classes.length)
-            return res.render('student/Search', {
-                title: `Results for - ${key}`,
-                user: req.session.user,
-                classes,
-                error: ''
-            })
-
-        res.render('student/Search', {
-            title: `No Result for - ${key}`,
-            user: req.session.user,
-            classes,
-            error: `Nothing found for key: ${key}`
-        })
-    }
-    catch (err) {
-        console.log(err)
-        res.render('student/Search', {
-            title: `There Was A Problem`,
-            user: req.session.user,
-            classes: [],
-            error: `Server Error`
-        })
-    }
+    const { q: key } = req.query    
+    res.render('student/Search', {
+        title: `Results for - ${key}`,
+        user: req.session.user,
+    })
 })
 
 // get the courses requested by the student
@@ -284,9 +244,5 @@ router.get('/requests', authUser, async (req, res) => {
         })
     }
 })
-
-function escapeRegex(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-}
 
 module.exports = router

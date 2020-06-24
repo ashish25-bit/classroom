@@ -52,7 +52,6 @@ router.post('/add/class', async (req, res) => {
 // request for class
 router.post('/request/class', async (req, res) => {
     const { id } = req.body
-
     try {
         const user = await Student.findOne({ _id: req.session.user._id })
         const classStudents = await Class.findOne({ _id: id })
@@ -65,7 +64,7 @@ router.post('/request/class', async (req, res) => {
             index = classStudents.requests.indexOf(req.session.user._id)
             classStudents.requests.splice(index, 1)
             await classStudents.save()
-            res.json({ cls: user.requests, msg: 'Request Cancelled' })
+            res.status(200).send('Request Cancelled')
         }
 
         // register here if not registered
@@ -75,12 +74,12 @@ router.post('/request/class', async (req, res) => {
             req.session.user = user
             classStudents.requests.unshift(req.session.user._id)
             await classStudents.save()
-            res.json({ cls: user.requests, msg: 'Requested' })
+            res.status(200).send('Requested')
         }
     }
     catch (err) {
         console.log(err)
-        res.json({ cls: user.requests, msg: 'Server Error' })
+        res.status(500).send('Server Error')
     }
 })
 
@@ -152,5 +151,38 @@ router.get('/get/requests', async (req, res) => {
         console.log(err)
     }
 })
+
+// search for the courses
+router.get('/search/:key', async (req, res) => {
+    try {
+        const { key } = req.params
+        const regex = new RegExp(escapeRegex(key), 'i')  
+        
+        const user = await Student.findOne({ _id: req.session.user._id })
+        
+        // searching for the classes which student is not a part of..
+        // the requested courses will be shown
+        const classes = await Class.find({
+            $and: [
+                {
+                    $or: [
+                        { name: { $regex: regex } },
+                        { subject: { $regex: regex } },
+                    ]
+                },
+                { _id: { $nin: user.classes } }
+            ]
+        }).populate('teacher', ['name', 'faculty_id'])   
+        res.json({ classes, error: '', requests: user.requests})
+    } 
+    catch (err) {
+        res.json({ classes: [], error: 'Server Error', requests: [] })
+    }
+})
+
+// returns the regex expression
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+}
 
 module.exports = router
