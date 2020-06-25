@@ -169,10 +169,10 @@ function makeNode(value, text, attribute) {
 }
 
 function emptyInput(element) {
-    element.style.color = 'red'
+    element.classList.add('empty_input')
 }
 
 function removeClass() {
     for (label of labels)
-        label.style.color = '#757575'
+        label.classList.remove('empty_input')
 }

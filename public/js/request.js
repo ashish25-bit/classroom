@@ -40,7 +40,7 @@ function acceptRequest(e) {
     e.target.classList.add('engaged')
     e.target.disabled = true
     const data = {
-        cid: getClassId(),
+        name: getClassId(),
         id: e.target.getAttribute('data-student-id')
     }
     axios.put('/api/accept/course/request', data, config)
@@ -48,7 +48,6 @@ function acceptRequest(e) {
             if (res.data === 'Error') {
                 e.target.classList.remove('engaged')
                 e.target.disabled = false
-                console.log(res.data)
             }
             else 
                 parent.remove()

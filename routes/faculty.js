@@ -152,7 +152,7 @@ router.get('/home', authUser, async (req, res) => {
         return res.redirect('/faculty/login')
 
     try {
-        const classes = await Class.find({ teacher: req.session.user._id })
+        const classes = await Class.find({ teacher: req.session.user._id }).sort({ subject: 1})
 
         if (!classes || !classes.length)
             return res.render('faculty/Classes', {
@@ -204,26 +204,26 @@ router.get('/requests', authUser, async (req, res) => {
         const requests = await Class.find({
             requests: { $exists: true, $not: { $size: 0 } }
         })
-        
-        if(!requests.length)
-            return res.render('faculty/Requests', { 
-                title: 'Requests', 
-                user: req.session.user, 
+
+        if (!requests.length)
+            return res.render('faculty/Requests', {
+                title: 'Requests',
+                user: req.session.user,
                 requests,
                 msg: 'No Requests'
             })
 
-        res.render('faculty/Requests', { 
-            title: 'Requests', 
-            user: req.session.user, 
+        res.render('faculty/Requests', {
+            title: 'Requests',
+            user: req.session.user,
             requests,
             msg: ''
         })
     }
     catch (err) {
         res.render('faculty/Requests', {
-            title: 'Requests', 
-            user: req.session.user, 
+            title: 'Requests',
+            user: req.session.user,
             requests: [],
             msg: 'Server Error'
         })
@@ -232,14 +232,14 @@ router.get('/requests', authUser, async (req, res) => {
 
 // get the requests for a particular course
 router.get('/request/:name', authUser, async (req, res) => {
-    if(!req.session.user)
+    if (!req.session.user)
         return res.redirect('/')
-    
+
     try {
         const { name } = req.params
         const cls = await Class.findOne({ name }).select(['-name, -students, -batch, -teacher'])
-        
-        if(!cls)
+
+        if (!cls)
             return res.render('faculty/Request', {
                 title: `No class found`,
                 user: req.session.user,
@@ -253,7 +253,7 @@ router.get('/request/:name', authUser, async (req, res) => {
             cls,
             msg: '',
         })
-    } 
+    }
     catch (err) {
         console.log(err)
         res.render('faculty/Request', {

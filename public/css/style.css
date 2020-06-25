@@ -6,10 +6,10 @@
 body {
     box-sizing: border-box;
 }
-body, input, button, ::placeholder {
+body, input, button, ::placeholder, textarea {
     font-family: 'Poppins', sans-serif;
 }
-input, a, button, select {
+input, a, button, select, textarea {
     outline: none;
 }
 a {
@@ -187,6 +187,24 @@ input::-webkit-inner-spin-button {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
     border-radius: 50%;
 }
+.add_class_form .field .empty_input {
+    color: red;
+    animation: empty 0.3s ease;
+}
+@keyframes empty {
+    0% {
+        transform: translateX(5px);
+    }
+    33% {
+        transform: translateX(-5px);
+    }
+    66% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
 /* 
     Home page faculty
 */
@@ -289,6 +307,10 @@ input::-webkit-inner-spin-button {
     width: 80%;
     margin: 0 auto;
 }
+.class_det2 {
+    padding: 10px 30px;
+    border-bottom: 1px solid #000;
+}
 .class_det  .students_con {
     margin: 10px 0;
 }
@@ -307,4 +329,102 @@ input::-webkit-inner-spin-button {
     text-transform: uppercase;
     border-radius: 15px;
     border: none;
+}
+.member_list {
+    float: left;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    overflow-y: auto;
+    height: 100vh;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.2);
+}
+.member_list .member {
+    border-bottom: 1px #ccc solid;
+    padding: 10px 20px;
+}
+.main_class_container {
+    width: calc(100% - 190px);
+    margin-left: 190px;
+}
+.main_class_container .btn_con {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.main_class_container .btn_con button {
+    padding: 5px 0;
+    border: none;
+    background: #3DAD8F;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bolder;
+    opacity: 0.7;
+}
+.main_class_container .btn_con .active {
+    background: #2c7f69;
+    opacity: 1;
+}
+.main_class_container .document_con {
+    display: none;
+}
+.member_list::-webkit-scrollbar, .announcement_input .content::-webkit-scrollbar {
+    width: 5px;
+}
+.member_list::-webkit-scrollbar-track, .announcement_input .content::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+.member_list::-webkit-scrollbar-thumb, .announcement_input .content::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+.member_list::-webkit-scrollbar-thumb:hover, .announcement_input .content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 
+    Announcements
+*/
+.announcement_input {
+    width: 80%;
+    margin: 10px auto;
+}
+.announcement_input .content{
+    width: 100%;
+    resize: none;
+    height: 150px;
+    outline: none;
+    border: 2px solid #ccc;
+    padding: 10px 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+.announcement_input .post {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background: #000;
+    color: #fff;
+    text-transform: uppercase;
+    border: none;
+}
+.announcement_con .announcements {
+    width: 80%;
+    margin: 10px auto;
+}
+.announcement {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.announcement .date {
+    color: #757575;
+    font-size: 13px;
+}
+.announcement_input .context {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
 }

@@ -6,20 +6,52 @@ block content
     else 
         include ../layouts/HeaderTeacher
 
+    p.response_msg
+
     if error !== ''
         h1(class='error' style='margin:0 30px ;')= error
 
     else 
-        .class_det
+        .class_det2
             h1= cls.subject
             p= `Class Strength: ${cls.students.length}`
+            p= `${cls.department} - ${cls.section} (Batch ${cls.batch})`
+            p= `Semester: ${cls.semester}`
             if type === 'teacher' && cls.requests.length
                 p= `Requests Pending: ${cls.requests.length}`
-                a(href=`/faculty/request/${cls.name}`)= `Attend the requests `
-                    i(class='fa fa-angle-right' aria-hidden="true")
-                    i(class='fa fa-angle-right' aria-hidden="true")
+                    a(href=`/faculty/request/${cls.name}` style='margin-left: 30px;')= `Attend the requests `
+                        i(class='fa fa-angle-right' aria-hidden="true")
+                        i(class='fa fa-angle-right' aria-hidden="true")
+            a(href="#" style='margin-right: 10px;')= `Chat Room `
+                i(class='fa fa-angle-right' aria-hidden="true")
+                i(class='fa fa-angle-right' aria-hidden="true")
+            a(href="#")= `Assignments `
+                i(class='fa fa-angle-right' aria-hidden="true")
+                i(class='fa fa-angle-right' aria-hidden="true")
 
-            .students_con
-                h2 Loading...
-    
-        script(src="js/class.js")
+        .class
+            .member_list 
+                h2(style='padding: 10px 20px;') Loading...
+            .main_class_container
+                .btn_con   
+                    button.docs_btn Documents
+                    button.anouncements_btn.active Annoucements
+                .document_con Documents
+                .announcement_con 
+                    if type === 'teacher'
+                        .announcement_input
+                            input(type="text" name="" class='context' placeholder='Give the context')
+                            div(contenteditable="true" class='content')
+                            small(style='color: #7f7f7f;') Once Posted It Cannot be edited.<br/>
+                            button.post Post
+
+                    h2(style='width: 80%; margin: 10px auto;') Announcements
+                    .announcements
+                        h2 Loading...
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+        script(src="js/class.js" type="module")
+        if type === 'student'
+            script(src="js/student/class.js" type="module")
+        else
+            script(src="js/teacher/class.js" type="module")

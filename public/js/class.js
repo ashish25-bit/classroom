@@ -1,4 +1,6 @@
-const students_con = document.querySelector('.students_con')
+import { getAnnouncements, getClassUid } from './module/class.js'
+const students_con = document.querySelector('.member_list')
+const announcements = document.querySelector('.announcements')
 
 window.onload = () => {
     let id = getClassUid()
@@ -11,24 +13,20 @@ window.onload = () => {
                 if (students.length) {
                     students_con.innerHTML = ''
                     students.forEach(student => {
-                        const { name, regno, section, department, semester } = student
+                        const { name, regno } = student
                         const div = document.createElement('div')
-                        div.classList.add('student')
-                        let content = `<h3>${regno}</h3> <p>${name}</p> <p>${department} - ${section}</p> <p>Semester: ${semester}</p>`
+                        div.classList.add('member')
+                        let content = `<h3>${regno}</h3> <p>${name}</p>`
                         div.innerHTML = content
                         students_con.appendChild(div)
                     })
                 }
                 else {
-                    students_con.innerHTML = '<h2>No Students</h2>'
+                    students_con.innerHTML = `<h2 style='padding: 10px 20px;'>No Students</h2>`
                 }
             }
         })
-        .catch(err => students_con.innerHTML = '<h2>Server Error</h2>')
-}
-
-function getClassUid() {
-    const href = window.location.href
-    let n = href.lastIndexOf('/')
-    return href.substring(n + 1, href.length)
+        .catch(err => students_con.innerHTML = `<h2 style='padding: 10px 20px;'>Server Error</h2>`)
+        
+    getAnnouncements(id, announcements)
 }
