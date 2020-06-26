@@ -1,5 +1,5 @@
 .header
-    span= `Hello, ${user.name.split(' ')[0]} `
+    span(class='full-name' data-full-name=user.name)= `Hello, ${user.name.split(' ')[0]} `
     a(class='nav_link' href=`/faculty/home`) Classes
     a(class='nav_link' href=`/faculty/requests`)  Requests
     a(class='nav_link' href='/logout') Logout

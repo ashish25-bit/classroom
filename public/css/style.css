@@ -36,7 +36,6 @@ input::-webkit-inner-spin-button {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     background: #3DAD8F;
     color: #fff;
-    margin-bottom: 10px;
 }
 .nav_link {
     margin: 0 5px;
@@ -368,16 +367,28 @@ input::-webkit-inner-spin-button {
 .main_class_container .document_con {
     display: none;
 }
-.member_list::-webkit-scrollbar, .announcement_input .content::-webkit-scrollbar {
+.member_list::-webkit-scrollbar, 
+.announcement_input .content::-webkit-scrollbar,
+.class_groups::-webkit-scrollbar,
+.message::-webkit-scrollbar {
     width: 5px;
 }
-.member_list::-webkit-scrollbar-track, .announcement_input .content::-webkit-scrollbar-track {
+.member_list::-webkit-scrollbar-track, 
+.announcement_input .content::-webkit-scrollbar-track,
+.class_groups::-webkit-scrollbar-track,
+.message::-webkit-scrollbar-track {
     background: #f1f1f1; 
 }
-.member_list::-webkit-scrollbar-thumb, .announcement_input .content::-webkit-scrollbar-thumb {
+.member_list::-webkit-scrollbar-thumb, 
+.announcement_input .content::-webkit-scrollbar-thumb,
+.class_groups::-webkit-scrollbar-thumb,
+.message::-webkit-scrollbar-thumb {
     background: #888; 
 }
-.member_list::-webkit-scrollbar-thumb:hover, .announcement_input .content::-webkit-scrollbar-thumb:hover {
+.member_list::-webkit-scrollbar-thumb:hover, 
+.announcement_input .content::-webkit-scrollbar-thumb:hover,
+.class_groups::-webkit-scrollbar-thumb:hover,
+.message::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 
@@ -427,4 +438,84 @@ input::-webkit-inner-spin-button {
     padding: 10px 20px;
     border: 2px solid #ccc;
     border-radius: 10px;
+}
+
+/* 
+    Message Room
+*/
+.class_groups {
+    float: left;
+    width: 250px;
+    height: calc( 100vh - 55px );
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+}
+.class_groups .group {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.class_groups .active {
+    background: #ececec;
+}
+.class_groups .group .name {
+    font-size: 16px;
+    overflow-y: hidden;
+    color: #000;
+    pointer-events: none;
+}
+.class_groups .group .code {
+    pointer-events: none;
+    font-size: 13px;
+    color: #757575;
+}
+.class_message_detail_container {
+    width: calc( 100% - 250px );
+    margin-left: 250px;
+}
+.class_message_detail_container .details {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    height: 148px;
+}
+.message_container {
+    overflow: hidden;
+    background: #04395E;
+}
+.message_container .message {
+    height: 676px;
+    width: 100%;
+    background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('../assets/chat.jpg');
+    background-size: cover;
+    background-position: center;
+    overflow-y: auto;
+}
+.message_form {
+    width: 100%;
+    padding: 20px 0px;
+    text-align: center;
+}
+.message_form  input {
+    width: 90%;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 20px;
+    border: none;
+}
+.message_form button {
+    padding: 10px 20px;
+    border: none;
+    background: #fff;
+    color: #04395E;
+    text-transform: uppercase;
+    border-radius: 20px;
+}
+.class_message_detail_container .details .back_link .fa-arrow-left {
+    padding: 9px 10px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    font-size: 13px;
+    position: relative;
+    bottom: 2px;
+    color: black;
 }

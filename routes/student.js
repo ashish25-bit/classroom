@@ -32,7 +32,7 @@ router.get('/logout', (req, res) => {
 // login route for student
 router.get('/', (req, res) => {
     if (req.session.user)
-        return res.redirect('/')
+        return res.redirect('/home')
 
     res.render('student/Login', {
         title: 'Login - Student',
@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
         req.session.user = user
         req.session.type = student
-        res.redirect(`/classroom/18DEV001J-CSE-C2-5-Batch2`)
+        res.redirect(`/classroom/chat/18DEV001J-CSE-C2-5-Batch2`)
     }
     catch (err) {
         console.log(err)
@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
 // signup page for student
 router.get('/register', (req, res) => {
     if (req.session.user)
-        return res.redirect('/')
+        return res.redirect('/home')
 
     res.render('student/Signup', {
         title: 'Register - Student',

@@ -1,0 +1,17 @@
+extends ../layouts/Layout
+block content
+    if type === 'student' 
+        include ../layouts/HeaderStudent
+    else 
+        include ../layouts/HeaderTeacher
+
+    .class_groups Loading...
+    .class_message_detail_container
+        .details
+            h1 Loading...
+        .message_container
+            .message
+                h3 Loading...
+
+    script(src="/socket.io/socket.io.js")
+    script(src="js/chat.js" type="module")

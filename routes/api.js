@@ -4,6 +4,8 @@ const router = express.Router()
 const subjects = require('../private/subjects')
 const Class = require('../models/Class')
 const Announcement = require('../models/Announcements')
+const { student } = require('../secret')
+const { find } = require('../models/Class')
 
 // get the options for subject and subject code
 router.get('/code/subject/:semester/:dept', (req, res) => {
@@ -209,16 +211,78 @@ router.post('/post/announcement', async (req, res) => {
 router.get('/get/announcement/:name', async (req, res) => {
     if (!req.session.user)
         return res.redirect('/')
-    
+
     try {
         const { name } = req.params
         const cls = await Class.findOne({ name })
         const announcement = await Announcement.find({ class: cls._id }).sort({ date: -1 })
-        res.send(announcement)   
-    } 
+        res.send(announcement)
+    }
     catch (err) {
         console.log(err)
         res.send('Server Error')
+    }
+})
+
+// get the class groups
+router.get('/class/groups', async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    try {
+        // if the user is a student
+        if (req.session.type === student) {
+            const user = await Student.findOne({ _id: req.session.user._id })
+            const groups = await Class.find({ _id: { $in: user.classes } }).select(['name', 'subject', 'code']).sort({ subject: 1 })
+            res.send(groups)
+            return
+        }
+
+        // if the requested user is a teacher
+        const groups = await Class.find({ teacher: req.session.user._id }).select(['name', 'subject', 'code']).sort({ subject: 1 })
+        res.send(groups)
+    }
+    catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+// get the class details
+router.get('/class/details/:name', async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    try {
+        const { name } = req.params
+        const cls = await Class.findOne({ name })
+            .populate('teacher', ['name', 'faculty_id'])
+            .select(['-requests', '-_id'])
+        if (!cls)
+            return res.json({ cls, msg: 'Requested Class Does Not Exists' })
+        res.json({ cls, msg: '' })
+    }
+    catch (err) {
+        console.log(err)
+        res.json({ cls: {}, msg: 'Server Error' })
+    }
+})
+
+// get the messages 
+router.get('/chat/messages/:name', async (req, res) => {
+    if (!req.session.user) 
+        return res.redirect('/')
+
+    try {
+        const { name } = req.params
+        const cls = await Class.findOne({ name })
+        .populate('teacher', ['name', 'faculty_id'])
+        .select(['-requests', '-_id', '-name'])
+        res.send(cls)
+    } 
+    catch (err) {
+        console.log(err)
+        res.send(err)
     }
 })
 

@@ -3,8 +3,13 @@ const session = require('express-session')
 const path = require('path')
 const connectDb = require('./core/db')
 const config = require('config')
+const socketio = require('socket.io')
+const http = require('http')
+const { joinRoom, showRoom, removeUser } = require('./utils/chat')
 
 const app = express()
+const server = http.createServer(app)
+const io = socketio(server)
 connectDb()
 
 // initialize the body parser for ajax calls
@@ -23,6 +28,7 @@ app.use('/faculty/class', express.static('public'))
 app.use('/faculty/register', express.static('public'))
 app.use('/faculty/request', express.static('public'))
 app.use('/classroom', express.static('public'))
+app.use('/classroom/chat', express.static('public'))
 
 //set template engine 
 app.set('views', path.join(__dirname, 'views'))
@@ -55,6 +61,23 @@ app.use((req, res, next) => {
     next(err)
 })
 
+// socket connections
+io.on('connection', socket => {
+    // join the chat room 
+    socket.on('joinRoom', rooms => {
+        rooms.forEach(room =>{
+            const user = joinRoom(room, socket.id) 
+            socket.join(user.room)
+        })
+    })
+
+    // checking the user when he is disconnected
+    socket.on('disconnect', () => removeUser(socket.id))
+
+    // to show all the rooms
+    socket.on('showRoom', () => showRoom())
+})
+
 //handling error
 app.use((err, req, res, next) => {
     res.status(err.status || 500)
@@ -63,4 +86,4 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`)) 

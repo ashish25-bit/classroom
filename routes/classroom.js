@@ -68,6 +68,16 @@ router.get('/:name', authUser, async (req, res) => {
     }
 })
 
+router.get('/chat/:name', async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
 
+    const type = req.session.type === student ? 'student' : 'teacher'
+    res.render('common/Chat', {
+        title: 'Message Room',
+        user: req.session.user,
+        type
+    })
+})
 
 module.exports = router
