@@ -1,8 +1,8 @@
-import { getClassUid, removeClass, getTemplate, empty, messageElement } from './module/chat.js'
+import { getClassUid, removeClass, getTemplate, empty, messageElement, appendMessage } from './module/chat.js'
 const group_con = document.querySelector('.class_groups')
 const details = document.querySelector('.details')
 const message_container = document.querySelector('.message_container')
-const messages = document.querySelector('.message')
+const messages = document.querySelector('.messages')
 const socket = io()
 const fullName = document.querySelector('.full-name').getAttribute('data-full-name')
 
@@ -25,7 +25,7 @@ window.onload = () => {
                 if (name === id)
                     div.classList.add('active')
                 div.addEventListener('click', selectGroup)
-                div.innerHTML =`<p class='name'>${subject}</p> <p class='code'>${code}</p>`
+                div.innerHTML = `<p class='name'>${subject}</p> <p class='code'>${code}</p>`
                 group_con.appendChild(div)
             })
             socket.emit('joinRoom', rooms)
@@ -36,15 +36,17 @@ window.onload = () => {
             console.log(err)
         })
 
-        // if the name is there in the parameters
-        if (id) {
-            // get the details
-            getDetails(id)
-            // get the messages
-            getMessages(id)
-        }
-        else 
-            details.innerHTML = empty
+    // if the name is there in the parameters
+    if (id) {
+        // get the details
+        getDetails(id)
+        // get the messages
+        getMessages(id)
+    }
+    else {
+        details.innerHTML = empty
+        messages.innerHTML = ''
+    }
 }
 
 function selectGroup(e) {
@@ -52,7 +54,7 @@ function selectGroup(e) {
         removeClass()
         const name = e.target.getAttribute('data-class-name')
         e.target.classList.add('active')
-        window.history.replaceState("/classroom/chat", "Message Room", `/classroom/chat/${name}`)
+        window.history.replaceState("/classroom/message/room", "Message Room", `/classroom/message/room/${name}`)
         details.innerHTML = `<h1>Loading</h1>`
         messages.innerHTML = '<h3>Loading</h3>'
         getDetails(name)
@@ -70,7 +72,7 @@ function getDetails(name) {
             }
             const template = getTemplate(cls)
             details.innerHTML = template
-            
+
             // add the message input to the dom
             if (message_container.lastElementChild.nodeName !== 'FORM') {
                 const form = document.createElement('form')
@@ -87,7 +89,7 @@ function getMessages(name) {
     axios.get(`/api/chat/messages/${name}`)
         .then(res => {
             console.log(res.data)
-            messages.innerHTML = '<h3>Data Loaded</h3>'
+            messages.innerHTML = ''
         })
         .catch(err => {
             console.log(err)
@@ -99,7 +101,18 @@ function sendMessage(e) {
     e.preventDefault()
     const msg = document.querySelector('.message_input')
     if (msg.value) {
-        console.log(msg.value)
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: 'false' })
+        appendMessage({ cls: 'right-msg', text: msg.value, time, fullName })
+        const room = getClassUid()
+        socket.emit('sendMessage', { room, fullName, text: msg.value, time })
         msg.value = ''
     }
 }
+
+socket.on('message', info => {
+    const { room } = info
+    delete info.room
+    console.log(room)
+    info.cls = 'left-msg'
+    appendMessage(info)
+})

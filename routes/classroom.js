@@ -68,7 +68,7 @@ router.get('/:name', authUser, async (req, res) => {
     }
 })
 
-router.get('/chat/:name', async (req, res) => {
+router.get('/message/room/:name', async (req, res) => {
     if (!req.session.user)
         return res.redirect('/')
 

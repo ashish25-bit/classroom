@@ -18,7 +18,7 @@ block content
                     .classes_btn_con
                         if cls.requests.length
                             a(href=`/faculty/request/${cls.name}`)= `${cls.requests.length} Requests`
-                        a(href=`/classroom/chat/${cls.name}`) Message Room
+                        a(href=`/classroom/message/room/${cls.name}`) Message Room
             -})
     
     else 

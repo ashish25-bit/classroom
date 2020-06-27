@@ -1,6 +1,5 @@
 import { getAnnouncements, getClassUid } from './module/class.js'
 const students_con = document.querySelector('.member_list')
-const announcements = document.querySelector('.announcements')
 
 window.onload = () => {
     let id = getClassUid()
@@ -28,5 +27,5 @@ window.onload = () => {
         })
         .catch(err => students_con.innerHTML = `<h2 style='padding: 10px 20px;'>Server Error</h2>`)
         
-    getAnnouncements(id, announcements)
+    getAnnouncements(id)
 }

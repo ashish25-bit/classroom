@@ -22,7 +22,7 @@ block content
                     a(href=`/faculty/request/${cls.name}` style='margin-left: 30px;')= `Attend the requests `
                         i(class='fa fa-angle-right' aria-hidden="true")
                         i(class='fa fa-angle-right' aria-hidden="true")
-            a(href=`/classroom/chat/${cls.name}` style='margin-right: 10px;')= `Chat Room `
+            a(href=`/classroom/message/room/${cls.name}` style='margin-right: 10px;')= `Chat Room `
                 i(class='fa fa-angle-right' aria-hidden="true")
                 i(class='fa fa-angle-right' aria-hidden="true")
             a(href="#")= `Assignments `
@@ -43,6 +43,11 @@ block content
                             input(type="text" name="" class='context' placeholder='Give the context')
                             div(contenteditable="true" class='content')
                             small(style='color: #7f7f7f;') Once Posted It Cannot be edited.<br/>
+                            label(style='color: #7f7f7f;') Add Link: 
+                            input(type="text" class="link_title" placeholder='If Left Empty The Link will be the name')
+                            input(type="text" class='link_url' placeholder='Enter Url Here')
+                            button.add_link Add 
+                            <br/>
                             button.post Post
 
                     h2(style='width: 80%; margin: 10px auto;') Announcements

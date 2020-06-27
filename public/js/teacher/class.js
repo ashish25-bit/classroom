@@ -1,13 +1,14 @@
-import { displayContainer, postAnnouncement, getClassUid, getAnnouncements } from '../module/class.js'
+import { displayContainer, postAnnouncement, getClassUid } from '../module/class.js'
 const post = document.querySelector('.post')
 const post_input = document.querySelector('.announcement_input div')
 const docs_btn = document.querySelector('.docs_btn')
 const anounce_btn = document.querySelector('.anouncements_btn')
 const document_con = document.querySelector('.document_con')
 const announcement_con = document.querySelector('.announcement_con')
-const announcements = document.querySelector('.announcements')
 const context = document.querySelector('.context')
-let response_msg = document.querySelector('.response_msg')
+const addLink = document.querySelector('.add_link')
+const linkHref = document.querySelector('.link_url')
+const linkName = document.querySelector('.link_title')
 
 docs_btn.addEventListener('click', () => {
     if (!docs_btn.classList.contains('active')) {
@@ -16,7 +17,7 @@ docs_btn.addEventListener('click', () => {
 })
 
 anounce_btn.addEventListener('click', () => {
-    if (!anounce_btn.classList.contains('active')) 
+    if (!anounce_btn.classList.contains('active'))
         displayContainer(anounce_btn, docs_btn, announcement_con, document_con)
 })
 
@@ -29,5 +30,16 @@ post.addEventListener('click', () => {
     post.disabled = true
     post.style.opacity = 0.5
     const name = getClassUid()
-    postAnnouncement(context.value, post, post_input.innerHTML, response_msg, name)
+    postAnnouncement(context, post, post_input, name)
+})
+
+addLink.addEventListener('click', () => {
+    if (!linkHref.value) {
+        alert('Enter atleast the link')
+        return
+    }
+    const tag = `<a href=${linkHref.value}>${!linkName.value ? linkHref.value : linkName.value}</a>`
+    post_input.innerHTML += tag
+    linkName.value = ''
+    linkHref.value = ''
 })

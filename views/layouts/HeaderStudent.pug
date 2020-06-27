@@ -1,5 +1,6 @@
 .header
-    span(class='full-name' data-full-name=user.name)= `Hello, ${user.name.split(' ')[0]}`
+    span(class='full-name' data-full-name=user.regno)= `Hello, ${user.name.split(' ')[0]}`
     a(href="/home" class='nav_link') Your Classes
     a(href="/requests" class='nav_link') Courses Requested
+    a(class='nav_link' href=`/classroom/message/room/class`) Message Room
     a(class='nav_link' href='/logout') Logout

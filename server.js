@@ -13,7 +13,7 @@ const io = socketio(server)
 connectDb()
 
 // initialize the body parser for ajax calls
-app.use(express.json({extented: false}))
+app.use(express.json({ extented: false }))
 
 // initialize body parser for normal logging in and signing in 
 app.use(express.urlencoded({ extended: false }))
@@ -28,7 +28,7 @@ app.use('/faculty/class', express.static('public'))
 app.use('/faculty/register', express.static('public'))
 app.use('/faculty/request', express.static('public'))
 app.use('/classroom', express.static('public'))
-app.use('/classroom/chat', express.static('public'))
+app.use('/classroom/message/room/', express.static('public'))
 
 //set template engine 
 app.set('views', path.join(__dirname, 'views'))
@@ -42,9 +42,9 @@ app.use(session({
     secret: config.get('SESSION_SECRET'),
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        httpOnly: true, 
-        maxAge: 5 * 24 * 60 * 60 * 1000 
+    cookie: {
+        httpOnly: true,
+        maxAge: 5 * 24 * 60 * 60 * 1000
     } // 5 days cookie
 }))
 
@@ -65,8 +65,8 @@ app.use((req, res, next) => {
 io.on('connection', socket => {
     // join the chat room 
     socket.on('joinRoom', rooms => {
-        rooms.forEach(room =>{
-            const user = joinRoom(room, socket.id) 
+        rooms.forEach(room => {
+            user = joinRoom(room, socket.id)
             socket.join(user.room)
         })
     })
@@ -76,6 +76,9 @@ io.on('connection', socket => {
 
     // to show all the rooms
     socket.on('showRoom', () => showRoom())
+
+    // receive the message
+    socket.on('sendMessage', info => socket.broadcast.to(info.room).emit('message', info))
 })
 
 //handling error

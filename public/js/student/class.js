@@ -16,6 +16,6 @@ anounce_btn.addEventListener('click', () => {
         displayContainer(anounce_btn, docs_btn, announcement_con, document_con)
         const name = getClassUid()
         announcements.innerHTML = '<h2>Loading...</h2>'
-        getAnnouncements(name, announcements)
+        getAnnouncements(name)
     }
 })

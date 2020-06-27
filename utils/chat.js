@@ -1,7 +1,7 @@
 let users = []
 
-function joinRoom(name, id) {
-    const user = { id, name }
+function joinRoom(room, id) {
+    const user = { id, room }
     users.push(user)
     return user
 }
