@@ -364,9 +364,9 @@ input::-webkit-inner-spin-button {
     background: #2c7f69;
     opacity: 1;
 }
-.main_class_container .document_con {
+/* .main_class_container .document_con {
     display: none;
-}
+} */
 .member_list::-webkit-scrollbar, 
 .announcement_input .content::-webkit-scrollbar,
 .class_groups::-webkit-scrollbar,
@@ -417,6 +417,9 @@ input::-webkit-inner-spin-button {
     text-transform: uppercase;
     border: none;
 }
+.announcement_con {
+    display: none;
+}
 .announcement_con .announcements {
     width: 80%;
     margin: 10px auto;
@@ -452,6 +455,86 @@ input::-webkit-inner-spin-button {
     background: #aaa;
     color: #fff;
     border: none;
+}
+
+/* 
+    Document upload and preview
+*/
+.document_input_con {
+    width: 80%;
+    margin: 10px auto;
+}
+.document_input_con .doc_context {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;    
+}
+.document_input_con .upload {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background: #000;
+    color: #fff;
+    text-transform: uppercase;
+    border: none;
+}
+.document_input_con #documents {
+    display: none;
+}
+.label_doc_input {
+    cursor: pointer;
+    display: inline-block;
+    background: #1c90aa;
+    padding: 10px 20px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 10px;
+    position: relative;
+}
+.progress_con {
+    width: 500px;
+    background: #9e9e9e;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    color: #fff;
+}
+.progress_fill {
+    background: #1c27a9;
+    height: 100%;
+    width: 50%;
+    color: #fff;
+    position: absolute;
+}
+.preview_doc {
+    margin: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 20px;
+}
+.preview_doc div {
+    cursor: pointer;
+}
+.preview_doc .docImg img {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.preview_doc .doc {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    background: #eee;
+    padding: 10px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+.preview_doc .doc p {
+    pointer-events: none;
 }
 /* 
     Message Room

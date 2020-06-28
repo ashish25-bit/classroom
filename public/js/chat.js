@@ -112,7 +112,8 @@ function sendMessage(e) {
 socket.on('message', info => {
     const { room } = info
     delete info.room
-    console.log(room)
-    info.cls = 'left-msg'
-    appendMessage(info)
+    if (getClassUid() === room) {
+        info.cls = 'left-msg'
+        appendMessage(info)
+    }
 })

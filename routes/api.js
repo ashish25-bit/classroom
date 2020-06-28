@@ -1,11 +1,13 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
 
 const subjects = require('../private/subjects')
 const Class = require('../models/Class')
 const Announcement = require('../models/Announcements')
 const { student } = require('../secret')
-const { find } = require('../models/Class')
 
 // get the options for subject and subject code
 router.get('/code/subject/:semester/:dept', (req, res) => {
@@ -284,6 +286,25 @@ router.get('/chat/messages/:name', async (req, res) => {
         console.log(err)
         res.send(err)
     }
+})
+
+// document upload route
+router.post('/document/upload', async (req, res) => {
+    const { name } = req.query
+    if (!fs.existsSync(`./public/documents/${name}`))
+        await fs.mkdirSync(`./public/documents/${name}`)
+
+    let storage = multer.diskStorage({  
+        destination: `./public/documents/${name}`,
+        filename: (req, file, cb) => {
+            cb(null, file.fieldname + '-' + new Date() + path.extname(file.originalname))
+        }
+    })
+
+    const upload = multer({ storage: storage }).array('myfile')
+    upload(req, res, async err => {
+        res.send('Completed')
+    })
 })
 
 // returns the regex expression

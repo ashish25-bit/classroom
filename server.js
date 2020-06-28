@@ -8,9 +8,9 @@ const http = require('http')
 const { joinRoom, showRoom, removeUser } = require('./utils/chat')
 
 const app = express()
+connectDb()
 const server = http.createServer(app)
 const io = socketio(server)
-connectDb()
 
 // initialize the body parser for ajax calls
 app.use(express.json({ extented: false }))

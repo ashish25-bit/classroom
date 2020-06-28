@@ -1,5 +1,6 @@
 extends ../layouts/Layout
 block content
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/file-upload-with-preview@4.0.2/dist/file-upload-with-preview.min.css">
 
     if type === 'student' 
         include ../layouts/HeaderStudent
@@ -34,9 +35,34 @@ block content
                 h2(style='padding: 10px 20px;') Loading...
             .main_class_container
                 .btn_con   
-                    button.docs_btn Documents
-                    button.anouncements_btn.active Annoucements
-                .document_con Documents
+                    button.docs_btn.active Documents
+                    button.anouncements_btn Annoucements
+                .document_con
+                    if type === 'teacher'
+                        .document_input_con
+                            form(class='add_doc')
+                                div
+                                    input(type="text" class='doc_context' placeholder='Enter the context')
+                                div
+                                    input(
+                                        name="files" 
+                                        accept="audio/*, video/*, image/*, text/*, application/*"
+                                        id='documents' 
+                                        class='document_input' 
+                                        type="file" 
+                                        multiple
+                                    ) 
+                                    label(for="documents" class='label_doc_input') Select Files
+                                small(style='color: #7f7f7f;') *Only .pdf, .txt, .ppt, .png, .docx, .jpg, .svg, .jpeg, .mp4, .js, .html, .css are allowed.<br/> 
+                                button(type="submit" class='upload') Upload
+                            .preview_doc
+
+                            .progress_con   
+                                .progress_fill
+                                .progress_text(style='position: relative;')
+
+                    h2(style='width: 80%; margin: 10px auto;') Documents
+
                 .announcement_con 
                     if type === 'teacher'
                         .announcement_input

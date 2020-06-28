@@ -9,6 +9,14 @@ const context = document.querySelector('.context')
 const addLink = document.querySelector('.add_link')
 const linkHref = document.querySelector('.link_url')
 const linkName = document.querySelector('.link_title')
+const addDocBtn = document.querySelector('.add_doc')
+const docInput = document.querySelector('.document_input')
+const docContext = document.querySelector('.doc_context')
+const progress = document.querySelector('.progress_text')
+const fill = document.querySelector('.progress_fill')
+const upload = document.querySelector('.upload')
+const previewContainer = document.querySelector('.preview_doc')
+let documents = []
 
 docs_btn.addEventListener('click', () => {
     if (!docs_btn.classList.contains('active')) {
@@ -43,3 +51,90 @@ addLink.addEventListener('click', () => {
     linkName.value = ''
     linkHref.value = ''
 })
+
+// event listener for document uploading
+addDocBtn.addEventListener('submit', e => {
+    e.preventDefault()
+    if (!docContext.value || !documents.length) {
+        alert('Enter Context and Select Atleast 1 file.')
+        return
+    }
+
+    // upload.style.opacity = '0.5'
+    // upload.disabled = true
+
+    let formData = new FormData()
+    const options = {
+        onUploadProgress: progressEvent => {
+            const { loaded, total } = progressEvent
+            let percent = Math.floor((loaded * 100) / total)
+            progress.innerText = `Uploading ${percent}%`
+            fill.style.width = `${percent}%`
+        }
+    }
+    formData.append('context', docContext.value)
+    for(const file of documents)
+        formData.append('myfile', file)
+    
+    const name = getClassUid()
+    axios.post(`/api/document/upload?name=${name}`, formData, options)
+        .then(res => {
+            progress.innerText = res.data
+            emptyInputs()
+            setTimeout(() => {
+                progress.innerText = ''
+                fill.style.width = `0%`
+            }, 2000)
+        })
+        .catch(err => {
+            emptyInputs()
+            progress.innerText = ''
+            fill.style.width = `0%`
+            console.log(err)
+        })
+})
+
+function emptyInputs() {
+    upload.style.opacity = '1'
+    upload.disabled = false
+    docContext.value = ''
+    documents = []
+    previewContainer.innerHTML = ''
+}
+
+// check the type of document
+docInput.addEventListener('change', e => {
+    let { files } = e.target
+    for (let i = 0; i < files.length; i++) {
+        const rnd = random()
+        documents[rnd] = files[i]
+        let reader = new FileReader()
+        const div = document.createElement('div')
+        div.setAttribute('title', 'click me to remove me.')
+        div.setAttribute('data-obj-id', rnd)
+        if (files[i].type === 'image/jpeg' || files[i].type === 'image/svg+xml') {
+            div.classList.add('docImg')
+            const img = document.createElement('img')
+            reader.onload = () => img.src = reader.result
+            reader.readAsDataURL(files[i])
+            div.appendChild(img)
+        }
+        else {
+            div.classList.add('doc')
+            div.innerHTML = `<p>${files[i].name}</p><p>${files[i].type}</p>`
+        }
+        div.addEventListener('click', removeDoc)
+        previewContainer.appendChild(div)
+    }
+})
+
+function removeDoc(e) {
+    e.target.remove()
+    const objName = e.target.getAttribute('data-obj-id')
+    delete documents[objName]
+    console.log(documents)
+}
+
+function random() {
+    return Math.floor(Math.random() * 1000)
+}
