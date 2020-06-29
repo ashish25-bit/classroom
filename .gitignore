@@ -2,3 +2,4 @@ node_modules/
 private/transporter.js
 config/default.json
 secret.js
+public/documents

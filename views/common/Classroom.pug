@@ -23,7 +23,7 @@ block content
                     a(href=`/faculty/request/${cls.name}` style='margin-left: 30px;')= `Attend the requests `
                         i(class='fa fa-angle-right' aria-hidden="true")
                         i(class='fa fa-angle-right' aria-hidden="true")
-            a(href=`/classroom/message/room/${cls.name}` style='margin-right: 10px;')= `Chat Room `
+            a(href=`/classroom/message/room/${cls.name}` style='margin-right: 10px;')= `Message Room `
                 i(class='fa fa-angle-right' aria-hidden="true")
                 i(class='fa fa-angle-right' aria-hidden="true")
             a(href="#")= `Assignments `
@@ -46,22 +46,28 @@ block content
                                 div
                                     input(
                                         name="files" 
-                                        accept="audio/*, video/*, image/*, text/*, application/*"
+                                        accept=".xlsx, .xls, image/*, .doc, .docx, .ppt, .pptx, .txt, .pdf"
                                         id='documents' 
                                         class='document_input' 
                                         type="file" 
                                         multiple
                                     ) 
                                     label(for="documents" class='label_doc_input') Select Files
-                                small(style='color: #7f7f7f;') *Only .pdf, .txt, .ppt, .png, .docx, .jpg, .svg, .jpeg, .mp4, .js, .html, .css are allowed.<br/> 
+                                small(style='color: #7f7f7f;') *Only .pdf, .txt, .ppt, .png, .doc, .docx, .jpg, .svg, .jpeg, .xls, .xlsx are allowed.<br/> 
+                                .preview_doc
                                 button(type="submit" class='upload') Upload
-                            .preview_doc
 
                             .progress_con   
                                 .progress_fill
                                 .progress_text(style='position: relative;')
+                        hr(style='margin:10px 0; border-top: 1px solid #ccc')  
 
-                    h2(style='width: 80%; margin: 10px auto;') Documents
+                    h2(style='width: 80%; margin: 10px auto;') 
+                        button.refresh_call(title='Refresh')
+                            i(class="fa fa-refresh" aria-hidden="true")
+                        span Documents
+                    .documents 
+                        h3 Loading...
 
                 .announcement_con 
                     if type === 'teacher'
@@ -76,7 +82,10 @@ block content
                             <br/>
                             button.post Post
 
-                    h2(style='width: 80%; margin: 10px auto;') Announcements
+                    h2(style='width: 80%; margin: 10px auto;')
+                        button.refresh_call(title='Refresh')
+                            i(class="fa fa-refresh" aria-hidden="true")
+                        span Announcements
                     .announcements
                         h2 Loading...
 

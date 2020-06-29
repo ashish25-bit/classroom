@@ -1,13 +1,17 @@
-import { displayContainer, getClassUid, getAnnouncements } from '../module/class.js'
+import { displayContainer, getClassUid, getAnnouncements, getDocuments } from '../module/class.js'
 const docs_btn = document.querySelector('.docs_btn')
 const anounce_btn = document.querySelector('.anouncements_btn')
 const document_con = document.querySelector('.document_con')
 const announcement_con = document.querySelector('.announcement_con')
 const announcements = document.querySelector('.announcements')
+const documents = document.querySelector('.documents')
 
 docs_btn.addEventListener('click', () => {
     if (!docs_btn.classList.contains('active')) {
         displayContainer(docs_btn, anounce_btn, document_con, announcement_con)
+        const name = getClassUid()
+        documents.innerHTML = '<h2>Loading...</h2>'
+        getDocuments(name)
     }
 })
 

@@ -1,10 +1,10 @@
 extends ../layouts/Layout
 block content
     include ../layouts/HeaderTeacher
-    a(href=`/faculty/add/class` style='margin:0 50px;')= `Add Class `
+    a(href=`/faculty/add/class` style='margin:0 50px; position: relative; top: 10px;')= `Add Class `
         i(class='fa fa-angle-right' aria-hidden="true")
         i(class='fa fa-angle-right' aria-hidden="true")
-    hr(style='margin:9px 0;')
+    hr(style='margin:19px 0; border-top: 1px solid #ccc')
 
     if msg === ''
         .grid_con

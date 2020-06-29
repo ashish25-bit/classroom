@@ -1,4 +1,4 @@
-import { displayContainer, postAnnouncement, getClassUid } from '../module/class.js'
+import { displayContainer, postAnnouncement, getClassUid, getAnnouncements } from '../module/class.js'
 const post = document.querySelector('.post')
 const post_input = document.querySelector('.announcement_input div')
 const docs_btn = document.querySelector('.docs_btn')
@@ -16,17 +16,30 @@ const progress = document.querySelector('.progress_text')
 const fill = document.querySelector('.progress_fill')
 const upload = document.querySelector('.upload')
 const previewContainer = document.querySelector('.preview_doc')
-let documents = []
+let documents = {}
+let fileNames = {}
+let flagAnnouncement = 1
+const extensions = [
+    'application/pdf', 'text/plain', 'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+]
+const extImg = ['pdf.svg', 'document.png', 'powerpoint.svg', 'word.svg', 'powerpoint.svg']
 
 docs_btn.addEventListener('click', () => {
-    if (!docs_btn.classList.contains('active')) {
+    if (!docs_btn.classList.contains('active'))
         displayContainer(docs_btn, anounce_btn, document_con, announcement_con)
-    }
 })
 
 anounce_btn.addEventListener('click', () => {
-    if (!anounce_btn.classList.contains('active'))
+    if (!anounce_btn.classList.contains('active')) {
         displayContainer(anounce_btn, docs_btn, announcement_con, document_con)
+        if (flagAnnouncement) {
+            const name = getClassUid()
+            getAnnouncements(name)
+            flagAnnouncement = 0
+        }
+    }
 })
 
 post.addEventListener('click', () => {
@@ -46,7 +59,7 @@ addLink.addEventListener('click', () => {
         alert('Enter atleast the link')
         return
     }
-    const tag = `<a href=${linkHref.value}>${!linkName.value ? linkHref.value : linkName.value}</a>`
+    const tag = `<a target='_blank' href=${linkHref.value}>${!linkName.value ? linkHref.value : linkName.value}</a>`
     post_input.innerHTML += tag
     linkName.value = ''
     linkHref.value = ''
@@ -55,13 +68,12 @@ addLink.addEventListener('click', () => {
 // event listener for document uploading
 addDocBtn.addEventListener('submit', e => {
     e.preventDefault()
-    if (!docContext.value || !documents.length) {
+    if (!docContext.value || !Object.keys(documents).length) {
         alert('Enter Context and Select Atleast 1 file.')
         return
     }
-
-    // upload.style.opacity = '0.5'
-    // upload.disabled = true
+    upload.style.opacity = '0.5'
+    upload.disabled = true
 
     let formData = new FormData()
     const options = {
@@ -72,10 +84,15 @@ addDocBtn.addEventListener('submit', e => {
             fill.style.width = `${percent}%`
         }
     }
+    // appending the document
     formData.append('context', docContext.value)
-    for(const file of documents)
-        formData.append('myfile', file)
-    
+    for (const objName in documents)
+        formData.append('myfile', documents[objName])
+
+    // appending the file names
+    for (const objName in fileNames)
+        formData.append('fileName', fileNames[objName])
+
     const name = getClassUid()
     axios.post(`/api/document/upload?name=${name}`, formData, options)
         .then(res => {
@@ -108,33 +125,47 @@ docInput.addEventListener('change', e => {
     for (let i = 0; i < files.length; i++) {
         const rnd = random()
         documents[rnd] = files[i]
+        fileNames[rnd] = files[i].name
         let reader = new FileReader()
         const div = document.createElement('div')
         div.setAttribute('title', 'click me to remove me.')
-        div.setAttribute('data-obj-id', rnd)
-        if (files[i].type === 'image/jpeg' || files[i].type === 'image/svg+xml') {
-            div.classList.add('docImg')
-            const img = document.createElement('img')
+        div.classList.add('docImg')
+        const img = document.createElement('img')
+        img.setAttribute('data-obj-id', rnd)
+        const input = document.createElement('input')
+        input.setAttribute('type', 'text')
+        input.setAttribute('data-obj-id', rnd)
+        input.value = files[i].name
+        const extension = files[i].type
+        if (extension === 'image/jpeg' || extension === 'image/svg+xml' || extension === 'image/png') {
             reader.onload = () => img.src = reader.result
             reader.readAsDataURL(files[i])
-            div.appendChild(img)
         }
         else {
-            div.classList.add('doc')
-            div.innerHTML = `<p>${files[i].name}</p><p>${files[i].type}</p>`
+            const index = extensions.indexOf(extension)
+            img.src = `./assets/${extImg[index]}`
         }
-        div.addEventListener('click', removeDoc)
+        div.appendChild(img)
+        div.appendChild(input)
+        input.addEventListener('keyup', changeDocName)
+        img.addEventListener('click', removeDoc)
         previewContainer.appendChild(div)
     }
 })
 
 function removeDoc(e) {
-    e.target.remove()
+    const parent = e.target.parentElement
+    parent.remove()
     const objName = e.target.getAttribute('data-obj-id')
     delete documents[objName]
-    console.log(documents)
+    delete fileNames[objName]
 }
 
 function random() {
-    return Math.floor(Math.random() * 1000)
+    return Math.floor(Math.random() * 1000) + 'xyz'
+}
+
+function changeDocName(e) {
+    const objName = e.target.getAttribute('data-obj-id')
+    fileNames[objName] = e.target.value
 }

@@ -7,6 +7,7 @@ const fs = require('fs')
 const subjects = require('../private/subjects')
 const Class = require('../models/Class')
 const Announcement = require('../models/Announcements')
+const Document = require('../models/Document')
 const { student } = require('../secret')
 
 // get the options for subject and subject code
@@ -272,16 +273,16 @@ router.get('/class/details/:name', async (req, res) => {
 
 // get the messages 
 router.get('/chat/messages/:name', async (req, res) => {
-    if (!req.session.user) 
+    if (!req.session.user)
         return res.redirect('/')
 
     try {
         const { name } = req.params
         const cls = await Class.findOne({ name })
-        .populate('teacher', ['name', 'faculty_id'])
-        .select(['-requests', '-_id', '-name'])
+            .populate('teacher', ['name', 'faculty_id'])
+            .select(['-requests', '-_id', '-name'])
         res.send(cls)
-    } 
+    }
     catch (err) {
         console.log(err)
         res.send(err)
@@ -294,19 +295,59 @@ router.post('/document/upload', async (req, res) => {
     if (!fs.existsSync(`./public/documents/${name}`))
         await fs.mkdirSync(`./public/documents/${name}`)
 
-    let storage = multer.diskStorage({  
+    let storage = multer.diskStorage({
         destination: `./public/documents/${name}`,
         filename: (req, file, cb) => {
-            cb(null, file.fieldname + '-' + new Date() + path.extname(file.originalname))
+            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
         }
     })
 
     const upload = multer({ storage: storage }).array('myfile')
     upload(req, res, async err => {
-        res.send('Completed')
+        if (err) {
+            console.log(err)
+            return res.send('Server Error')
+        }
+        let attachments = []
+        for (let i = 0; i < req.files.length; i++)
+            attachments.push(req.files[i].filename)
+
+        try {
+            const { context, fileName } = req.body
+            const cls = await Class.findOne({ name })
+            const document = new Document({
+                class: cls._id,
+                context,
+                attachments,
+                fileName
+            })
+            await document.save()
+            res.send('Documents Uploaded')
+        }
+        catch (err) {
+            console.log(err)
+            res.send('Server Error')
+        }
     })
 })
 
+// get the uploaded documents 
+router.get('/get/document/:name', async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    try {
+        const { name } = req.params
+        const cls = await Class.findOne({ name })
+        const documents = await Document.find({ class: cls._id }).sort({ date: -1 })
+        res.send(documents)
+    }
+    catch (err) {
+        console.log(err)
+        res.send('Server Error')
+    }
+})
+    
 // returns the regex expression
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")

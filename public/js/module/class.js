@@ -4,7 +4,10 @@ const config = {
     }
 }
 const announcements = document.querySelector('.announcements')
+const documents = document.querySelector('.documents')
 let response_msg = document.querySelector('.response_msg')
+const extensions = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx']
+const extImg = ['document.png', 'pdf.svg', 'word.svg', 'word.svg', 'powerpoint.svg', 'powerpoint.svg']
 
 // add active class to btn 1
 // remove active class from btn2
@@ -61,7 +64,7 @@ export function getAnnouncements(name) {
                 const div = document.createElement('div')
                 const Date = moment(date)
                 div.classList.add('announcement')
-                div.innerHTML = `<p class=date>Posted On: ${Date.format('MMMM Do YYYY, h:m A')}</p><h3>${context}</h3>`
+                div.innerHTML = `<p class='date'>Posted On: ${Date.format('MMMM Do YYYY, h:m A')}</p><h3>${context}</h3>`
                 div.innerHTML += post
                 announcements.appendChild(div)
             })
@@ -86,4 +89,41 @@ function appendAnnouncement(context, content) {
     div.innerHTML = `<p class=date>Posted On: ${Date}</p><h3>${context}</h3>`
     div.innerHTML += content
     announcements.prepend(div)
+}
+
+// get the documents 
+export function getDocuments(name) {
+    axios.get(`/api/get/document/${name}`)
+        .then(res => {
+            if (!res.data.length) {
+                documents.innerHTML = '<h3>No Documents</h3>'
+                return
+            }
+            documents.innerHTML = ''
+            for (const doc in res.data) {
+                const { attachments, date, context, fileName } = res.data[doc]
+                const div = document.createElement('div')
+                div.classList.add('document')
+                const Date = moment(date)
+                div.innerHTML = `<p class='date'>Uploaded On: ${Date.format('MMMM Do YYYY, h:m A')}</p> <h3>${context}</h3>`
+                let preview = ''
+                attachments.forEach((pic, index) => {
+                    const ext = pic.substring(pic.lastIndexOf('.') + 1, pic.length)
+                    preview += `<div class='docImg'>`
+                    if (extensions.includes(ext)) {
+                        const index = extensions.indexOf(ext)
+                        preview += `<img src='../../assets/${extImg[index]}' />`
+                    }
+                    else 
+                        preview += `<img src='../../documents/${name}/${pic}' />`
+                    preview += `<p>${fileName[index]}</p></div>`
+                })            
+                div.innerHTML += `<div class='preview_doc'>${preview}</div>`
+                documents.appendChild(div) 
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            documents.innerHTML = '<h3>Error</h3>'
+        })
 }

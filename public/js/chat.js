@@ -113,7 +113,7 @@ socket.on('message', info => {
     const { room } = info
     delete info.room
     if (getClassUid() === room) {
-        info.cls = 'left-msg'
+        fullName === info.fullName ? info.cls = 'right-msg' : info.cls = 'left-msg'
         appendMessage(info)
     }
 })
