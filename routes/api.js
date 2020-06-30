@@ -8,6 +8,8 @@ const subjects = require('../private/subjects')
 const Class = require('../models/Class')
 const Announcement = require('../models/Announcements')
 const Document = require('../models/Document')
+const Message = require('../models/Messages')
+const Student = require('../models/Student')
 const { student } = require('../secret')
 
 // get the options for subject and subject code
@@ -91,26 +93,27 @@ router.post('/request/class', async (req, res) => {
 
 // get the students for a class
 router.get('/class/students/:name', async (req, res) => {
-    if (req.session.user) {
-        const { name } = req.params
-        try {
-            const cls = await Class.findOne({ name })
-            const students = await Student.find({ _id: { $in: cls.students } })
-                .select(['-password', '-email', '-date', '-classes', '-requests'])
-                .sort({ regno: 1 })
-            res.json({ students, error: '' })
-        }
-        catch (err) {
-            console.log(err)
-            res.json({ students: [], error: 'Server Error' })
-        }
+    if (!req.session.user)
+        return res.json({ students: [], error: 'Not Logged in' })
+
+    const { name } = req.params
+    try {
+        const cls = await Class.findOne({ name })
+        const students = await Student.find({ _id: { $in: cls.students } })
+            .select(['-password', '-email', '-date', '-classes', '-requests'])
+            .sort({ regno: 1 })
+        res.json({ students, error: '' })
+    }
+    catch (err) {
+        console.log(err)
+        res.json({ students: [], error: 'Server Error' })
     }
 })
 
 // get the students who have requested for a course
 router.get('/request/students/:id', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         const { id } = req.params
@@ -151,7 +154,7 @@ router.put('/accept/course/request', async (req, res) => {
 // get the requests
 router.get('/get/requests', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         const user = await Student.findOne({ _id: req.session.user._id })
@@ -164,6 +167,9 @@ router.get('/get/requests', async (req, res) => {
 
 // search for the courses
 router.get('/search/:key', async (req, res) => {
+    if (!req.session.user)
+        return res.send('Not logged in')
+
     try {
         const { key } = req.params
         const regex = new RegExp(escapeRegex(key), 'i')
@@ -213,7 +219,7 @@ router.post('/post/announcement', async (req, res) => {
 // get the announcements
 router.get('/get/announcement/:name', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         const { name } = req.params
@@ -230,7 +236,7 @@ router.get('/get/announcement/:name', async (req, res) => {
 // get the class groups
 router.get('/class/groups', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         // if the user is a student
@@ -254,7 +260,7 @@ router.get('/class/groups', async (req, res) => {
 // get the class details
 router.get('/class/details/:name', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         const { name } = req.params
@@ -268,24 +274,6 @@ router.get('/class/details/:name', async (req, res) => {
     catch (err) {
         console.log(err)
         res.json({ cls: {}, msg: 'Server Error' })
-    }
-})
-
-// get the messages 
-router.get('/chat/messages/:name', async (req, res) => {
-    if (!req.session.user)
-        return res.redirect('/')
-
-    try {
-        const { name } = req.params
-        const cls = await Class.findOne({ name })
-            .populate('teacher', ['name', 'faculty_id'])
-            .select(['-requests', '-_id', '-name'])
-        res.send(cls)
-    }
-    catch (err) {
-        console.log(err)
-        res.send(err)
     }
 })
 
@@ -334,7 +322,7 @@ router.post('/document/upload', async (req, res) => {
 // get the uploaded documents 
 router.get('/get/document/:name', async (req, res) => {
     if (!req.session.user)
-        return res.redirect('/')
+        return res.send('Not logged in')
 
     try {
         const { name } = req.params
@@ -347,7 +335,65 @@ router.get('/get/document/:name', async (req, res) => {
         res.send('Server Error')
     }
 })
-    
+
+router.get('/message', async (req, res) => {
+    const _id = '5eef00c3b1e5ac7cff1e24f1'
+    try {
+        const cls = await Class.find({ teacher: _id }).select('_id')
+        const messages = await Message.find({ class: { $in: cls } })
+            .sort({ date: -1 })
+            .select(['message', 'date', '-_id'])
+            .populate('class', ['subject', 'code'])  
+
+        res.send(messages)
+    }
+    catch (err) {
+        console.log(err)
+        res.send('Error')
+    }
+})
+
+// put the message to the database
+router.post('/post/message', async (req, res) => {
+    const { _id: from } = req.session.user
+    const { name, message } = req.body
+    const fromModel = req.session.type === student ? 'student' : 'teacher'
+    try {
+        const cls = await Class.findOne({ name }).select('_id')
+        const newMsg = new Message({
+            from,
+            fromModel,
+            class: cls._id,
+            message
+        })
+        await newMsg.save()
+        res.send('')
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+// get all the messages of a group
+router.get('/get/group/messages/:name', async (req, res) => {
+    if (!req.session.user)
+        return res.send('Not logged in')
+
+    const { name } = req.params
+    try {
+        const cls = await Class.findOne({ name }).select('_id')
+        const messages = await Message.find({ class: cls._id })
+            .populate('from', ['regno', 'name'])
+            .select(['-_id', '-class'])
+            .sort({ date: 1 })
+        res.json({ messages, your_id: req.session.user._id })
+    }
+    catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
 // returns the regex expression
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")

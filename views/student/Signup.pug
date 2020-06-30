@@ -79,7 +79,7 @@ block content
                 .field
                     label Section
                     select(name='section' value='' class='section' )
-                        option(value='') Select Your Department Here
+                        option(value='') Select Your Section Here
                         -sections.forEach(section => {
                             option(value=section)= section
                         -})
@@ -101,4 +101,4 @@ block content
                 a(href='/faculty/login') Faculty's Login
                 a(href='/faculty/signup') Faculty's Register
 
-            script(src="js/signup2.js")
+            script(src="js/student/signup.js")

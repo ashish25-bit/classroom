@@ -25,7 +25,10 @@ window.onload = () => {
                 }
             }
         })
-        .catch(err => students_con.innerHTML = `<h2 style='padding: 10px 20px;'>Server Error</h2>`)
+        .catch(err => {
+            console.log(err)
+            students_con.innerHTML = `<h2 style='padding: 10px 20px;'>Server Error</h2>`
+        })
         
     // getAnnouncements(id)
     getDocuments(id)

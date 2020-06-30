@@ -1,3 +1,8 @@
+const config = {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+}
 const messages = document.querySelector('.messages')
 // no chats selected
 export const empty = `<h1 style='font-size: 3rem;'>No Chats Selected</h1>`
@@ -45,4 +50,10 @@ export function appendMessage({ cls, text, time, fullName }) {
                         <div class="msg-text">${text}</div>
                     </div>`
     messages.appendChild(div)
+}
+
+export function messageToDatabase(name, message) {
+    axios.post('/api/post/message', { name, message }, config)
+        .then(res => {})
+        .catch(err => console.log(err))
 }

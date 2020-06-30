@@ -24,7 +24,7 @@ const extensions = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 ]
-const extImg = ['pdf.svg', 'document.png', 'powerpoint.svg', 'word.svg', 'powerpoint.svg']
+const extImg = ['pdf.svg', 'document.svg', 'powerpoint.svg', 'word.svg', 'powerpoint.svg']
 
 docs_btn.addEventListener('click', () => {
     if (!docs_btn.classList.contains('active'))

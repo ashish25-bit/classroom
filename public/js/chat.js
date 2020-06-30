@@ -1,4 +1,4 @@
-import { getClassUid, removeClass, getTemplate, empty, messageElement, appendMessage } from './module/chat.js'
+import { getClassUid, removeClass, getTemplate, empty, messageElement, appendMessage, messageToDatabase } from './module/chat.js'
 const group_con = document.querySelector('.class_groups')
 const details = document.querySelector('.details')
 const message_container = document.querySelector('.message_container')
@@ -86,10 +86,17 @@ function getDetails(name) {
 }
 
 function getMessages(name) {
-    axios.get(`/api/chat/messages/${name}`)
+    axios.get(`/api/get/group/messages/${name}`)
         .then(res => {
-            console.log(res.data)
             messages.innerHTML = ''
+            const { messages: msgs, your_id: id } = res.data
+            msgs.forEach(data => {
+                const { message: text, date, from, fromModel } = data
+                const Date = moment(date)
+                const cls = from._id === id ? 'right-msg' : 'left-msg'
+                const fullName = fromModel === 'teacher' ? from.name : from.regno
+                appendMessage({ cls, text, time: Date.format('h:m A'), fullName })
+            })
         })
         .catch(err => {
             console.log(err)
@@ -105,6 +112,7 @@ function sendMessage(e) {
         appendMessage({ cls: 'right-msg', text: msg.value, time, fullName })
         const room = getClassUid()
         socket.emit('sendMessage', { room, fullName, text: msg.value, time })
+        messageToDatabase(room, msg.value)
         msg.value = ''
     }
 }

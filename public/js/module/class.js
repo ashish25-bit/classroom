@@ -7,7 +7,7 @@ const announcements = document.querySelector('.announcements')
 const documents = document.querySelector('.documents')
 let response_msg = document.querySelector('.response_msg')
 const extensions = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx']
-const extImg = ['document.png', 'pdf.svg', 'word.svg', 'word.svg', 'powerpoint.svg', 'powerpoint.svg']
+const extImg = ['document.svg', 'pdf.svg', 'word.svg', 'word.svg', 'powerpoint.svg', 'powerpoint.svg']
 
 // add active class to btn 1
 // remove active class from btn2
