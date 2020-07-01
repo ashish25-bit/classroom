@@ -1,5 +1,4 @@
 const container = document.querySelector('.students_con')
-const id = document.querySelector('#cid')
 const config = {
     headers: {
         'Content-Type': 'application/json'
@@ -11,13 +10,16 @@ window.onload = () => {
         return container.innerText = 'No Results'
 
     // ajax call here
-    axios.get(`/api/request/students/${id.getAttribute('data-class-id')}`)
+    const name = getClassId()
+    // id.getAttribute('data-class-id')
+    axios.get(`/api/request/students/${name}`)
         .then(res => {
             container.innerHTML = ''
             if (res.status !== 200 || res.statusText !== 'OK')
                 return container.innerText = 'Server Error'
-            const { data: students } = res
-            students.forEach(student => {
+            
+            res.data.forEach(data => {
+                const { student } = data 
                 const { _id: id, regno, batch, section, name, semester, department } = student
                 const div = document.createElement('div')
                 div.classList.add('student')
@@ -29,7 +31,7 @@ window.onload = () => {
                 button.setAttribute('data-student-id', id)
                 div.appendChild(button)
                 button.addEventListener('click', acceptRequest)
-                container.appendChild(div)
+                container.prepend(div)
             })
         })
         .catch(err => console.log(err))
@@ -39,20 +41,23 @@ function acceptRequest(e) {
     const parent = e.target.parentElement
     e.target.classList.add('engaged')
     e.target.disabled = true
+    e.target.innerText = 'Accepting'
     const data = {
         name: getClassId(),
         id: e.target.getAttribute('data-student-id')
     }
     axios.put('/api/accept/course/request', data, config)
         .then(res => {
-            if (res.data === 'Error') {
-                e.target.classList.remove('engaged')
-                e.target.disabled = false
-            }
-            else 
-                parent.remove()
+            e.target.innerText = res.data
+            setTimeout(() => parent.remove(), 2000)
         })
-        .catch(err => console.log(err) )
+        .catch(err => {
+            e.target.classList.remove('engaged')
+            e.target.disabled = false
+            e.target.innerText = 'Accept Request'
+            alert('Unable to accept the request.')
+            console.log(err) 
+        })
 }
 
 function getClassId() {

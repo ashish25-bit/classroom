@@ -39,7 +39,19 @@ const StudentSchema = new mongoose.Schema({
         default: Date.now()
     },
     classes: [],
-    requests: []
+    requests: [
+        {
+            class: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'class',
+                required: true
+            },
+            date: {
+                type: Date,
+                default: Date.now()
+            }
+        }
+    ]
 })
 
 module.exports = Student = mongoose.model('student', StudentSchema)

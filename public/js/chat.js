@@ -78,25 +78,30 @@ function getDetails(name) {
                 const form = document.createElement('form')
                 form.innerHTML = messageElement
                 form.classList.add('message_form')
+                form.setAttribute('data-class-id', cls._id)
                 form.addEventListener('submit', sendMessage)
                 message_container.appendChild(form)
             }
+            else
+                document.querySelector('.message_form').setAttribute('data-class-id', cls._id)
         })
         .catch(err => console.log(err))
 }
 
 function getMessages(name) {
+    messages.innerHTML = ''
     axios.get(`/api/get/group/messages/${name}`)
         .then(res => {
-            messages.innerHTML = ''
-            const { messages: msgs, your_id: id } = res.data
-            msgs.forEach(data => {
-                const { message: text, date, from, fromModel } = data
-                const Date = moment(date)
-                const cls = from._id === id ? 'right-msg' : 'left-msg'
-                const fullName = fromModel === 'teacher' ? from.name : from.regno
-                appendMessage({ cls, text, time: Date.format('h:m A'), fullName })
-            })
+            const { messages: msgs, your_id: id, msg } = res.data
+            if (msg == undefined) {
+                msgs.forEach(data => {
+                    const { message: text, date, from, fromModel } = data
+                    const Date = moment(date)
+                    const cls = from._id === id ? 'right-msg' : 'left-msg'
+                    const fullName = fromModel === 'teacher' ? from.name : from.regno
+                    appendMessage({ cls, text, time: Date.format('h:m A'), fullName })
+                })
+            }
         })
         .catch(err => {
             console.log(err)
@@ -107,12 +112,13 @@ function getMessages(name) {
 function sendMessage(e) {
     e.preventDefault()
     const msg = document.querySelector('.message_input')
+    const id = document.querySelector('.message_form').getAttribute('data-class-id')
     if (msg.value) {
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: 'false' })
         appendMessage({ cls: 'right-msg', text: msg.value, time, fullName })
         const room = getClassUid()
         socket.emit('sendMessage', { room, fullName, text: msg.value, time })
-        messageToDatabase(room, msg.value)
+        messageToDatabase(id, msg.value)
         msg.value = ''
     }
 }

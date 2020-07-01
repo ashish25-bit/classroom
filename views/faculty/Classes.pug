@@ -19,6 +19,7 @@ block content
                         if cls.requests.length
                             a(href=`/faculty/request/${cls.name}`)= `${cls.requests.length} Requests`
                         a(href=`/classroom/message/room/${cls.name}`) Message Room
+                        a(href=`/classroom/assignment/${cls.name}`) Assignments
             -})
     
     else 

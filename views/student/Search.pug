@@ -6,23 +6,11 @@ block content
     //- search form
     include ../layouts/SearchForm
 
-    //- if error !== ''
-    //-     h1(class='error' style='margin:0 30px ;')= error
-
-    //- else
-    //-     .grid_con
-    //-         -classes.forEach(cls => {
-    //-             .class
-    //-                 h2= cls.subject
-    //-                 p= `Faculty: (${cls.teacher.faculty_id}) ${cls.teacher.name}`
-    //-                 p= `Code: ${cls.code}`
-    //-                 p= `Unique Id: ${cls.name}`
-    //-                 button(data-class-id=cls._id class='register_cls' disabled)
-    //-         -})
     .grid_con
         h2 Loading
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.2/qs.min.js" integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4=" crossorigin="anonymous"></script>
+    script(src="/socket.io/socket.io.js")
     script(src="js/search.js")
     script(src="js/searchjs.js")

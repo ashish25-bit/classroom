@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
         req.session.user = user
         req.session.type = student
-        res.redirect(`/home`)
+        res.redirect(`/classroom/assignment/18DEV001J-CSE-B2-5-Batch1`)
     }
     catch (err) {
         console.log(err)
@@ -167,7 +167,7 @@ router.get('/home', authUser, async (req, res) => {
         return res.redirect('/login')
 
     try {
-        const { classes } = req.session.user
+        const { classes } = await Student.findOne({ _id: req.session.user._id }).select('classes')
         // if no classes
         if (!classes.length)
             return res.render('student/Home', {
@@ -203,7 +203,7 @@ router.get('/search/class', authUser, (req, res) => {
     if (!req.session.user)
         return res.redirect('/')
 
-    const { q: key } = req.query    
+    const { q: key } = req.query
     res.render('student/Search', {
         title: `Results for - ${key}`,
         user: req.session.user,
@@ -216,8 +216,13 @@ router.get('/requests', authUser, async (req, res) => {
         return res.redirect('/')
 
     try {
-        const { requests } = req.session.user
-        const cls = await Class.find({ _id: { $in: requests } }).populate('teacher', ['name', 'faculty_id']).select(['subject', 'code'])
+        const { requests: reqs } = req.session.user
+        let requests = []
+        reqs.forEach(r => requests.push(r.class))
+
+        const cls = await Class.find({ _id: { $in: requests } })
+            .populate('teacher', ['name', 'faculty_id'])
+            .select(['subject', 'code'])
 
         if (!cls.length)
             return res.render('student/Requests', {

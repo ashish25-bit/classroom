@@ -10,8 +10,11 @@ block content
                 .class
                     a(href=`/classroom/${cls.name}` style='color:#000; font-size: 1.4rem;font-weight: bold;')= cls.subject
                     p= `Faculty: (${cls.teacher.faculty_id}) ${cls.teacher.name}`
+                    p= `Code: ${cls.code}`
+                    p= `Class Strength: ${cls.students.length}`
                     .classes_btn_con
                         a(href=`/classroom/message/room/${cls.name}`) Message Room
+                        a(href=`/classroom/assignment/${cls.name}`) Assignments
             -})
 
     else 

@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = user
         req.session.type = teacher
-        res.redirect(`/faculty/home`)
+        res.redirect(`/classroom/assignment/18DEV001J-CSE-B2-5-Batch1`)
     }
     catch (err) {
         console.log(err)

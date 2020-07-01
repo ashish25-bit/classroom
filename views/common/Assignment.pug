@@ -1,0 +1,51 @@
+extends ../layouts/Layout
+block content
+    if type === 'student' 
+        include ../layouts/HeaderStudent
+    else 
+        include ../layouts/HeaderTeacher
+
+    .class_groups Loading...
+
+    .assignment_main_container
+        .details
+            h1 Loading...
+        if type === 'teacher'
+            .btn_con
+                button.assign_btn.active Give Assignment
+                button.assigned_btn Assignments
+            .assign_container
+                - var date = new Date().toISOString().split("T")[0];
+                form(class='assign_form')
+                    div
+                        input(type="text" class='title' placeholder='Enter the title')
+                    div(contenteditable="true" class='content')
+                    div(style='margin: 10px 0;')
+                        label(style='color: #7f7f7f;') Submission Date: 
+                        input(
+                            type='date' 
+                            min=date 
+                            style='border: 1px solid #7f7f7f; padding: 5px 10px; width: 30%;'
+                            class='submissionDate'
+                        )
+                    div
+                        input(
+                            name="files" 
+                            accept=".xlsx, .xls, image/*, .doc, .docx, .ppt, .pptx, .txt, .pdf"
+                            id='assign_docs' 
+                            class='assign_docs' 
+                            type="file" 
+                            multiple
+                        )
+                        label(for="assign_docs" class='label_assign_docs') Select Files
+                    small(style='color: #7f7f7f;') *Only .pdf, .txt, .ppt, .png, .doc, .docx, .jpg, .svg, .jpeg, .xls, .xlsx are allowed.<br/> 
+                    .preview_doc
+                    button(type="submit" class='upload') Upload
+
+        .assignment_container
+            p Posted assignments here
+
+    if type === 'student' 
+        script(src="js/student/assignment.js" type='module')
+    else 
+        script(src="js/teacher/assignment.js" type='module')

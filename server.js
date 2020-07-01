@@ -29,6 +29,7 @@ app.use('/faculty/register', express.static('public'))
 app.use('/faculty/request', express.static('public'))
 app.use('/classroom', express.static('public'))
 app.use('/classroom/message/room/', express.static('public'))
+app.use('/classroom/assignment/', express.static('public'))
 
 //set template engine 
 app.set('views', path.join(__dirname, 'views'))

@@ -52,8 +52,8 @@ export function appendMessage({ cls, text, time, fullName }) {
     messages.appendChild(div)
 }
 
-export function messageToDatabase(name, message) {
-    axios.post('/api/post/message', { name, message }, config)
+export function messageToDatabase(_id, message) {
+    axios.post('/api/post/message', { _id, message }, config)
         .then(res => {})
         .catch(err => console.log(err))
 }

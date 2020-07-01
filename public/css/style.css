@@ -256,7 +256,7 @@ input::-webkit-inner-spin-button {
 
 .classes_btn_con {
     position: absolute;
-    top: 20%;
+    top: 15%;
     right: -50%;
     transition: 0.5s right ease;
 }
@@ -350,11 +350,13 @@ input::-webkit-inner-spin-button {
     width: calc(100% - 175px);
     margin-left: 175px;
 }
-.main_class_container .btn_con {
+.main_class_container .btn_con,
+.assignment_main_container .btn_con {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
-.main_class_container .btn_con button {
+.main_class_container .btn_con button,
+.assignment_main_container .btn_con button {
     padding: 5px 0;
     border: none;
     background: #3DAD8F;
@@ -363,35 +365,37 @@ input::-webkit-inner-spin-button {
     font-weight: bolder;
     opacity: 0.7;
 }
-.main_class_container .btn_con .active {
+.main_class_container .btn_con .active,
+.assignment_main_container .btn_con .active {
     background: #2c7f69;
     opacity: 1;
 }
-/* .main_class_container .document_con {
-    display: none;
-} */
 .member_list::-webkit-scrollbar, 
 .announcement_input .content::-webkit-scrollbar,
 .class_groups::-webkit-scrollbar,
-.messages::-webkit-scrollbar {
+.messages::-webkit-scrollbar,
+.assign_form .content::-webkit-scrollbar {
     width: 5px;
 }
 .member_list::-webkit-scrollbar-track, 
 .announcement_input .content::-webkit-scrollbar-track,
 .class_groups::-webkit-scrollbar-track,
-.messages::-webkit-scrollbar-track {
+.messages::-webkit-scrollbar-track,
+.assign_form .content::-webkit-scrollbar-track {
     background: #f1f1f1; 
 }
 .member_list::-webkit-scrollbar-thumb, 
 .announcement_input .content::-webkit-scrollbar-thumb,
 .class_groups::-webkit-scrollbar-thumb,
-.messages::-webkit-scrollbar-thumb {
+.messages::-webkit-scrollbar-thumb,
+.assign_form .content::-webkit-scrollbar-thumb {
     background: #888; 
 }
 .member_list::-webkit-scrollbar-thumb:hover, 
 .announcement_input .content::-webkit-scrollbar-thumb:hover,
 .class_groups::-webkit-scrollbar-thumb:hover,
-.messages::-webkit-scrollbar-thumb:hover {
+.messages::-webkit-scrollbar-thumb:hover,
+.assign_form .content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 .refresh_call {
@@ -412,7 +416,8 @@ input::-webkit-inner-spin-button {
     width: 80%;
     margin: 10px auto;
 }
-.announcement_input .content{
+.announcement_input .content,
+.assign_form .content {
     width: 100%;
     resize: none;
     height: 150px;
@@ -479,18 +484,20 @@ input::-webkit-inner-spin-button {
     margin-bottom: 0;
     padding-bottom: 20px;
 }
-.document_input_con {
+.document_input_con, .assign_container{
     width: 80%;
     margin: 10px auto;
 }
-.document_input_con .doc_context {
+.document_input_con .doc_context,
+.assign_form .title {
     width: 100%;
     margin-bottom: 10px;
     padding: 10px 20px;
     border: 2px solid #ccc;
     border-radius: 10px;    
 }
-.document_input_con .upload {
+.document_input_con .upload,
+.assign_form .upload {
     margin: 5px 0;
     padding: 5px 10px;
     background: #000;
@@ -498,10 +505,10 @@ input::-webkit-inner-spin-button {
     text-transform: uppercase;
     border: none;
 }
-.document_input_con #documents {
+.document_input_con #documents, .assign_form #assign_docs {
     display: none;
 }
-.label_doc_input {
+.label_doc_input, .label_assign_docs {
     cursor: pointer;
     display: inline-block;
     background: #1c90aa;
@@ -594,11 +601,13 @@ input::-webkit-inner-spin-button {
     font-size: 13px;
     color: #757575;
 }
-.class_message_detail_container {
+.class_message_detail_container, 
+.assignment_main_container {
     width: calc( 100% - 250px );
     margin-left: 250px;
 }
-.class_message_detail_container .details {
+.class_message_detail_container .details, 
+.assignment_main_container .details {
     padding: 10px 20px;
     border-bottom: 1px solid #ccc;
     height: 148px;
@@ -636,7 +645,8 @@ input::-webkit-inner-spin-button {
     text-transform: uppercase;
     border-radius: 20px;
 }
-.class_message_detail_container .details .back_link .fa-arrow-left {
+.class_message_detail_container .details .back_link .fa-arrow-left,
+.assignment_main_container .details .back_link .fa-arrow-left {
     padding: 9px 10px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
     border-radius: 50%;
@@ -710,4 +720,11 @@ input::-webkit-inner-spin-button {
 .right-msg .msg-bubble::before {
     border-left: 10px solid #095863;
     right: -9px;
+}
+
+/* 
+    Assignment page
+*/
+.assignment_container {
+    display: none;
 }

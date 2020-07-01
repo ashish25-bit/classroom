@@ -59,31 +59,30 @@ router.post('/add/class', async (req, res) => {
 
 // request for class
 router.post('/request/class', async (req, res) => {
-    const { id } = req.body
+    const { name } = req.body
     try {
         const user = await Student.findOne({ _id: req.session.user._id })
-        const classStudents = await Class.findOne({ _id: id })
-        // if already registered to class then remove
-        if (user.requests.includes(id)) {
-            let index = user.requests.indexOf(id)
+        const classStudents = await Class.findOne({ name })
+        let index = user.requests.findIndex(request => `${request.class}` == `${classStudents._id}`)
+        
+        // if already requested for the class then remove
+        if (index >= 0) {
             user.requests.splice(index, 1)
-            await user.save()
-            req.session.user = user
-            index = classStudents.requests.indexOf(req.session.user._id)
+            index = classStudents.requests.findIndex(request => `${request.student}` == `${user._id}`)
             classStudents.requests.splice(index, 1)
-            await classStudents.save()
-            res.status(200).send('Request Cancelled')
-        }
-
-        // register here if not registered
-        else {
-            user.requests.unshift(id)
             await user.save()
-            req.session.user = user
-            classStudents.requests.unshift(req.session.user._id)
             await classStudents.save()
-            res.status(200).send('Requested')
+            req.session.user = user
+            return res.status(200).send('Request Cancelled')
         }
+        
+        // register here if not already requested
+        user.requests.push({ class: classStudents._id })
+        classStudents.requests.push({ student: req.session.user._id })
+        await user.save()
+        await classStudents.save()
+        req.session.user = user
+        res.status(200).json('Requested')
     }
     catch (err) {
         console.log(err)
@@ -111,16 +110,16 @@ router.get('/class/students/:name', async (req, res) => {
 })
 
 // get the students who have requested for a course
-router.get('/request/students/:id', async (req, res) => {
+router.get('/request/students/:name', async (req, res) => {
     if (!req.session.user)
         return res.send('Not logged in')
 
     try {
-        const { id } = req.params
-        const cls = await Class.findOne({ _id: id })
-        const students = await Student.find({ _id: { $in: cls.requests } })
-            .select(['-password', '-date', '-email', '-requests', '-classes'])
-        res.send(students)
+        const { name } = req.params
+        const students = await Class.findOne({ name })
+            .populate('requests.student', ['name', 'regno', 'department', 'section', 'batch', 'semester'])
+            .select('requests')
+        res.status(200).send(students.requests)
     }
     catch (err) {
         console.log(err)
@@ -133,21 +132,22 @@ router.put('/accept/course/request', async (req, res) => {
     const { id, name } = req.body
     try {
         const cls = await Class.findOne({ name })
-        const cid = cls._id
-        const student = await Student.findOne({ _id: id })
-        let index = cls.requests.indexOf(id)
+        const cid = `${cls._id}`
+        const student = await Student.findOne({ _id: id }).select('-password')
+        let index = cls.requests.findIndex(request => `${request.student}` == id)
         cls.requests.splice(index, 1)
-        index = student.requests.indexOf(cls)
+        index = student.requests.findIndex(request => `${request.class}` == cid)
         student.requests.splice(index, 1)
         cls.students.push(id)
-        student.classes.push(cid)
+        student.classes.push(cls._id)
         await cls.save()
         await student.save()
-        res.send('Request Accepted')
+        req.session.user = student
+        res.status(200).send('Request Accepted')
     }
     catch (err) {
         console.log(err)
-        res.send('Error')
+        res.status(500).send('Error')
     }
 })
 
@@ -242,13 +242,17 @@ router.get('/class/groups', async (req, res) => {
         // if the user is a student
         if (req.session.type === student) {
             const user = await Student.findOne({ _id: req.session.user._id })
-            const groups = await Class.find({ _id: { $in: user.classes } }).select(['name', 'subject', 'code']).sort({ subject: 1 })
+            const groups = await Class.find({ _id: { $in: user.classes } })
+                .select(['name', 'subject', 'code'])
+                .sort({ subject: 1 })
             res.send(groups)
             return
         }
 
         // if the requested user is a teacher
-        const groups = await Class.find({ teacher: req.session.user._id }).select(['name', 'subject', 'code']).sort({ subject: 1 })
+        const groups = await Class.find({ teacher: req.session.user._id })
+            .select(['name', 'subject', 'code'])
+            .sort({ subject: 1 })
         res.send(groups)
     }
     catch (err) {
@@ -266,7 +270,21 @@ router.get('/class/details/:name', async (req, res) => {
         const { name } = req.params
         const cls = await Class.findOne({ name })
             .populate('teacher', ['name', 'faculty_id'])
-            .select(['-requests', '-_id'])
+            .select(['-requests'])
+
+        const type = req.session.type === student ? 'student' : 'teacher'
+        // if a student requesting this route but not in the class
+        if (type === 'student') {
+            if (!cls.students.includes(req.session.user._id))
+                return res.json({ cls: {}, msg: 'You are not the member of this class.' })
+        }
+
+        // if a faculty requesting this route not the teacher of this class.
+        if (type === 'teacher') {
+            if (cls.teacher._id != req.session.user._id)
+                return res.json({ cls: {}, msg: 'You are not the teacher of this class.' })
+        }
+
         if (!cls)
             return res.json({ cls, msg: 'Requested Class Does Not Exists' })
         res.json({ cls, msg: '' })
@@ -343,7 +361,7 @@ router.get('/message', async (req, res) => {
         const messages = await Message.find({ class: { $in: cls } })
             .sort({ date: -1 })
             .select(['message', 'date', '-_id'])
-            .populate('class', ['subject', 'code'])  
+            .populate('class', ['subject', 'code'])
 
         res.send(messages)
     }
@@ -356,14 +374,13 @@ router.get('/message', async (req, res) => {
 // put the message to the database
 router.post('/post/message', async (req, res) => {
     const { _id: from } = req.session.user
-    const { name, message } = req.body
+    const { _id, message } = req.body
     const fromModel = req.session.type === student ? 'student' : 'teacher'
     try {
-        const cls = await Class.findOne({ name }).select('_id')
         const newMsg = new Message({
             from,
             fromModel,
-            class: cls._id,
+            class: _id,
             message
         })
         await newMsg.save()
@@ -381,7 +398,21 @@ router.get('/get/group/messages/:name', async (req, res) => {
 
     const { name } = req.params
     try {
-        const cls = await Class.findOne({ name }).select('_id')
+        const type = req.session.type === student ? 'student' : 'teacher'
+        const cls = await Class.findOne({ name })
+            .populate('teacher', ['_id'])
+            .select(['_id', 'students'])
+
+        if (type === 'student') {
+            if (!cls.students.includes(req.session.user._id))
+                return res.json({ msg: '' })
+        }
+
+        if (type === 'teacher') {
+            if (cls.teacher._id != req.session.user._id)
+                return res.json({ msg: '' })
+        }
+
         const messages = await Message.find({ class: cls._id })
             .populate('from', ['regno', 'name'])
             .select(['-_id', '-class'])
@@ -391,6 +422,25 @@ router.get('/get/group/messages/:name', async (req, res) => {
     catch (err) {
         console.log(err)
         res.send(err)
+    }
+})
+
+router.get('/sample', async (req,res) => {
+    const _id = '5efb1c1f3745d358763e4f5c'
+    const stu_id = '5efb1f2e863eae5b144e17d5'
+    // 5efb1f2e863eae5b144e17d5 5efb1b8625015c5576d17938
+    try {
+        // const cls = await Class.findOne({ _id })
+        // cls.requests = []
+        // await cls.save()
+        const user = await Student.findOne({ _id: stu_id })
+        user.requests = []
+        await user.save()
+        res.send('Done')
+    } 
+    catch (err) {
+        console.log(err)
+        res.send('Error')    
     }
 })
 

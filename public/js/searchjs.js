@@ -32,25 +32,24 @@ window.onload = () => {
                 <p>Code: ${code}</p> <p>UniqueId: ${name}</p>`
 
                 const button = document.createElement('button')
-                button.innerText = requests.includes(_id) ? 'REQUESTED' : 'REQUEST'
-                button.setAttribute('data-class-id', _id)
+                button.innerText = requests.filter(request => request.class == _id).length ? 'REQUESTED': 'REQUEST'
+                button.setAttribute('data-class-name', name)
                 button.classList.add('register_cls')
                 button.addEventListener('click', requestCourse)
 
                 div.appendChild(button)
                 container.appendChild(div)
             })
-
         })
         .catch(err => container.innerHTML = `<h2>${err}/h2>`)
 }
 
 function requestCourse(e) {
     const button = e.target
-    const id = button.getAttribute('data-class-id')
+    const name = button.getAttribute('data-class-name')
     button.classList.add('engaged')
     button.disabled = true
-    axios.post('/api/request/class', { id }, config)
+    axios.post('/api/request/class', { name }, config)
         .then(res => {
             button.disabled = false
             button.classList.remove('engaged')
@@ -75,3 +74,4 @@ function showResponse(msg) {
         response_msg.innerText = ''
     }, 5000)
 }
+

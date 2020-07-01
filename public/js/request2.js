@@ -15,20 +15,19 @@ if(buttons) {
             const parent = e.target.parentElement
             axios.post('/api/request/class', { id }, config)
                 .then(res => {
-                    const { msg } = res.data
-                    if(msg !== 'Server Error') {
-                        parent.remove()
-                        buttons = document.querySelectorAll('.cancel')
-                        document.title = buttons.length ? `${buttons.length} Requested Courses` : 'No Courses Requested'
-                        showResponse(msg)
-                    }
-                    else {
-                        button.style.opacity = 1
+                    if (res.status !== 200) {
+                        showResponse('Server Error')
                         button.disabled = false
-                        showResponse(msg)
+                        button.style.opacity = 1
+                        return
                     }
+                    parent.remove()
+                    buttons = document.querySelectorAll('.cancel')
+                    document.title = buttons.length ? `${buttons.length} Requested Courses` : 'No Courses Requested'
+                    showResponse(res.data)
                 })
                 .catch(err => {
+                    console.log(err)
                     button.style.opacity = 1
                     button.disabled = false
                     showResponse('Server Error')
