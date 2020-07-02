@@ -3,4 +3,5 @@ private/transporter.js
 config/default.json
 secret.js
 public/documents
+public/assignments
 bugs.txt

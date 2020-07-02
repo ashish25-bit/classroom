@@ -99,7 +99,7 @@ function getMessages(name) {
                     const Date = moment(date)
                     const cls = from._id === id ? 'right-msg' : 'left-msg'
                     const fullName = fromModel === 'teacher' ? from.name : from.regno
-                    appendMessage({ cls, text, time: Date.format('h:m A'), fullName })
+                    appendMessage({ cls, text, time: Date.format('hh:mm A'), fullName })
                 })
             }
         })

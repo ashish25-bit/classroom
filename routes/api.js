@@ -10,6 +10,8 @@ const Announcement = require('../models/Announcements')
 const Document = require('../models/Document')
 const Message = require('../models/Messages')
 const Student = require('../models/Student')
+const Sample = require('../models/Sample')
+const mailer = require('../private/nodemailer')
 const { student } = require('../secret')
 
 // get the options for subject and subject code
@@ -425,18 +427,60 @@ router.get('/get/group/messages/:name', async (req, res) => {
     }
 })
 
+router.post('/class/assignment', async (req, res) => {
+    const { name } = req.query
+    if (!fs.existsSync(`./public/assignments/${name}`))
+        await fs.mkdirSync(`./public/assignments/${name}`)
+
+    let storage = multer.diskStorage({
+        destination: `./public/assignments/${name}`,
+        filename: (req, file, cb) => {
+            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
+        }
+    })
+
+    const upload = multer({ storage: storage }).array('assignmentFile')
+    upload(req, res, async err => {
+        if (err) {
+            console.log(err)
+            return res.send('Server Error')
+        }
+    })
+})
+
+// sample route to perfrom various experiments on mongoose
 router.get('/sample', async (req,res) => {
-    const _id = '5efb1c1f3745d358763e4f5c'
-    const stu_id = '5efb1f2e863eae5b144e17d5'
-    // 5efb1f2e863eae5b144e17d5 5efb1b8625015c5576d17938
+    // const _id = '5efb1c1f3745d358763e4f5c'
+    // const stu_id = '5efb1b8625015c5576d17938'
+    // studs - 5efb1f2e863eae5b144e17d5 5efb1b8625015c5576d17938 5efb1e78863eae5b144e17d3
+    // cls - 5efb1c1f3745d358763e4f5c
     try {
         // const cls = await Class.findOne({ _id })
         // cls.requests = []
         // await cls.save()
-        const user = await Student.findOne({ _id: stu_id })
-        user.requests = []
-        await user.save()
-        res.send('Done')
+
+        // const user = await Student.findOne({ _id: stu_id })
+        // user.requests = []
+        // await user.save()
+        // res.send('Done')
+
+        // await new Sample({
+        //     class: _id,
+        //     students: stu_id
+        // }).save()
+        // res.send('Done')
+        
+        // const sample = await Sample.find({ students: { $in: stu_id } })
+        //     .populate('class', ['name'])
+        //     .select(['-students', '-__v'])
+        //     .sort({ date: -1 })
+        // res.send(sample)
+        
+        // const { students } = await Sample.findOne({ _id: '5efe17eea735bb1ae59e7c40' }).select('students')
+        // const emails = await Student.find({ _id: { $in: students } })
+        //     .distinct('email')
+        // mailer(emails.toString(), 'Sample', 'Blind carbon copy mail. Please Ignore.')
+        // res.send(emails.toString())
     } 
     catch (err) {
         console.log(err)

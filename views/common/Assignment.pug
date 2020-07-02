@@ -28,6 +28,13 @@ block content
                             style='border: 1px solid #7f7f7f; padding: 5px 10px; width: 30%;'
                             class='submissionDate'
                         )
+                    div.select_student_container
+                        h2 STUDENTS
+                        label() Select All
+                        input(type="checkbox" class='select_all' disabled)
+                        hr(style='margin:10px 0; border-top: 1px solid #ccc')
+                        .students_con Loading...
+
                     div
                         input(
                             name="files" 
@@ -42,9 +49,16 @@ block content
                     .preview_doc
                     button(type="submit" class='upload') Upload
 
+                .progress_con
+                    .progress_fill
+                    .progress_text(style='position: relative;')
+            hr(style='margin:10px 0; border-top: 1px solid #ccc')
+
         .assignment_container
             p Posted assignments here
 
+    script
+        | var type = !{JSON.stringify(type)}
     if type === 'student' 
         script(src="js/student/assignment.js" type='module')
     else 

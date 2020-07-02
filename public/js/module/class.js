@@ -64,7 +64,7 @@ export function getAnnouncements(name) {
                 const div = document.createElement('div')
                 const Date = moment(date)
                 div.classList.add('announcement')
-                div.innerHTML = `<p class='date'>Posted On: ${Date.format('MMMM Do YYYY, h:m A')}</p><h3>${context}</h3>`
+                div.innerHTML = `<p class='date'>Posted On: ${Date.format('MMMM Do YYYY, hh:mm A')}</p><h3>${context}</h3>`
                 div.innerHTML += post
                 announcements.appendChild(div)
             })
@@ -83,7 +83,7 @@ export function getClassUid() {
 }
 
 function appendAnnouncement(context, content) {
-    const Date = moment().format('MMMM Do YYYY, h:mm A')
+    const Date = moment().format('MMMM Do YYYY, hh:mm A')
     const div = document.createElement('div')
     div.classList.add('announcement')
     div.innerHTML = `<p class=date>Posted On: ${Date}</p><h3>${context}</h3>`
@@ -105,7 +105,7 @@ export function getDocuments(name) {
                 const div = document.createElement('div')
                 div.classList.add('document')
                 const Date = moment(date)
-                div.innerHTML = `<p class='date'>Uploaded On: ${Date.format('MMMM Do YYYY, h:m A')}</p> <h3>${context}</h3>`
+                div.innerHTML = `<p class='date'>Uploaded On: ${Date.format('MMMM Do YYYY, hh:mm A')}</p> <h3>${context}</h3>`
                 let preview = ''
                 attachments.forEach((pic, index) => {
                     const ext = pic.substring(pic.lastIndexOf('.') + 1, pic.length)

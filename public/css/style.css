@@ -580,6 +580,10 @@ input::-webkit-inner-spin-button {
     height: calc( 100vh - 55px );
     overflow-y: auto;
     border-right: 1px solid #ccc;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    
 }
 .class_groups .group {
     padding: 10px 20px;
@@ -727,4 +731,34 @@ input::-webkit-inner-spin-button {
 */
 .assignment_container {
     display: none;
+}
+.assign_form .students_con {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+.select_student_container {
+    margin: 10px 0;
+    padding: 10px 20px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+.select_student_container .select_all {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 5px;
+}
+.student-checkbox {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 5px;
+}
+.students_con div {
+    margin: 10px 0;
 }
