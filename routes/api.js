@@ -11,6 +11,7 @@ const Document = require('../models/Document')
 const Message = require('../models/Messages')
 const Student = require('../models/Student')
 const Sample = require('../models/Sample')
+const Assignment = require('../models/Assignment')
 const mailer = require('../private/nodemailer')
 const { student } = require('../secret')
 
@@ -314,7 +315,7 @@ router.post('/document/upload', async (req, res) => {
     upload(req, res, async err => {
         if (err) {
             console.log(err)
-            return res.send('Server Error')
+            return res.status(500).send('Server Error')
         }
         let attachments = []
         for (let i = 0; i < req.files.length; i++)
@@ -330,11 +331,11 @@ router.post('/document/upload', async (req, res) => {
                 fileName
             })
             await document.save()
-            res.send('Documents Uploaded')
+            res.status(200).send('Documents Uploaded')
         }
         catch (err) {
             console.log(err)
-            res.send('Server Error')
+            res.status(500).send('Server Error')
         }
     })
 })
@@ -443,9 +444,56 @@ router.post('/class/assignment', async (req, res) => {
     upload(req, res, async err => {
         if (err) {
             console.log(err)
-            return res.send('Server Error')
+            return res.status(500).send('Server Error')
+        }
+
+        try {
+            const { students, fileName, title, description, submissionDate } = req.body
+            const cls = await Class.findOne({ name })
+            let attachments = []
+            for (let i = 0; i < req.files.length; i++)
+                attachments.push(req.files[i].filename)
+            const assignment = new Assignment({
+                class: cls._id,
+                title,
+                submissionDate,
+                description,
+                attachments,
+                fileName,
+                students
+            })
+            await assignment.save()
+            const emails = await Student.find({ _id: { $in: students } }).distinct('email')
+            mailer(emails.toString(), `${cls.subject} Assignment`, `${title} is given as the assignment. Submission Date ${submissionDate}`)
+            res.status(200).send('Assignment Posted')
+        } 
+        catch (err) {
+            console.log(err)
+            res.status(500).send('Server error')
         }
     })
+})
+
+// get the annoucements
+router.get('/get/assignments/:name', async (req, res) => {
+    if (!(req.session.user))
+        return res.send('Not logged in')
+
+    try {
+        const { name } = req.params
+        const cls = await Class.findOne({ name }).select('_id')
+        if (!cls)
+            return res.status(400).send('No classes found')
+
+        const assignments = await Assignment
+            .find({ class: cls._id })
+            .sort({ date: -1 })
+        res.status(200).send(assignments)
+    } 
+    catch (err) {
+        console.log(err)
+        res.status(500).send('Server Error')
+    }
 })
 
 // sample route to perfrom various experiments on mongoose

@@ -5,3 +5,5 @@ secret.js
 public/documents
 public/assignments
 bugs.txt
+secret.cert
+secret.key

@@ -1,11 +1,18 @@
 const express = require('express')
 const session = require('express-session')
 const path = require('path')
-const connectDb = require('./core/db')
 const config = require('config')
+// const fs = require('fs')
 const socketio = require('socket.io')
 const http = require('http')
+// const https = require('https')
+const connectDb = require('./core/db')
 const { joinRoom, showRoom, removeUser } = require('./utils/chat')
+
+// const options = {
+//     key: fs.readFileSync('./server.key'),
+//     cert: fs.readFileSync('./server.cert')
+// }
 
 const app = express()
 connectDb()

@@ -66,4 +66,5 @@ function changeDocName(e) {
 export function emptyDocVariables() {
     documents = {}
     fileNames = {}
+    previewContainer.innerHTML = ''
 }

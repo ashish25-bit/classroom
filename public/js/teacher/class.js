@@ -94,15 +94,9 @@ addDocBtn.addEventListener('submit', e => {
         .then(res => {
             progress.innerText = res.data
             emptyInputs()
-            setTimeout(() => {
-                progress.innerText = ''
-                fill.style.width = `0%`
-            }, 2000)
         })
         .catch(err => {
             emptyInputs()
-            progress.innerText = ''
-            fill.style.width = `0%`
             console.log(err)
         })
 })
@@ -111,8 +105,16 @@ function emptyInputs() {
     upload.style.opacity = '1'
     upload.disabled = false
     docContext.value = ''
-    previewContainer.innerHTML = ''
     emptyDocVariables()
+    const button = document.createElement('button')
+    button.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>'
+    button.classList.add('close')
+    button.addEventListener('click', e => {
+        fill.style.width = '0'
+        progress.innerText = ''
+        e.target.remove()
+    })
+    document.querySelector('.progress_con').appendChild(button)
 }
 
 // check the type of document

@@ -1,10 +1,12 @@
 const group_con = document.querySelector('.class_groups')
 const details = document.querySelector('.details')
+const assignment_container = document.querySelector('.assignment_container')
 import { getClassUid } from './class.js'
 import { removeClass, getTemplate } from './chat.js'
 const selectAll = document.querySelector('.select_all')
 const students = document.querySelector('.students_con')
 let added = []
+let flagAssignment = 1
 
 export async function getClassGroups() {
     try {
@@ -37,14 +39,22 @@ export async function getClassGroups() {
 
 function selectGroup(e) {
     if (!e.target.classList.contains('active')) {
+        const subjectName = e.target.childNodes[0].innerText
         removeClass()
         const name = e.target.getAttribute('data-class-name')
         e.target.classList.add('active')
-        window.history.replaceState("/classroom/assignment", "Message Room", `/classroom/assignment/${name}`)
+        window.history.replaceState("/classroom/assignment/", `${subjectName} - Assignment`, `/classroom/assignment/${name}`)
+        document.title = `${subjectName} - Assignment`
         details.innerHTML = `<h1>Loading...</h1>`
         getDetails(name)
         if (type === 'teacher')
             getClassStudents(name)
+        if (assignment_container.style.display === 'block') {
+            getAssignments(name)
+            flagAssignment = 0
+            return
+        }
+        flagAssignment = 1
     }
 }
 
@@ -109,7 +119,7 @@ export function addRemove(checkbox, status, selectAll) {
     if (!selectAll) {
         const index = added.indexOf(id)
         added.splice(index, 1)
-    } 
+    }
 }
 
 export function emptyAdded() {
@@ -118,4 +128,45 @@ export function emptyAdded() {
 
 export function getAddedStudents() {
     return added
+}
+
+export function getAssignments(name) {
+    assignment_container.innerHTML = '<h3>Loading...</h3>'
+    axios.get(`/api/get/assignments/${name}`)
+        .then(res => {
+            assignment_container.innerHTML = ''
+
+            if (!res.data.length) {
+                assignment_container.innerHTML = '<h3>No Assignments</h3>'
+                return
+            }
+
+            res.data.forEach(assignment => {
+                const div = document.createElement('div')
+                div.classList.add('assignment')
+                const { date, title, submissionDate, attachments } = assignment
+                const Date = moment(date)
+                div.innerHTML = `<p class='date'>${Date.format('MMMM Do YYYY, hh:mm A')}</p> <h2>${title}</h2> 
+                <p style='font_size: 20px; color: #757575;'>Submission Date ${submissionDate}</p>`
+                div.innerHTML += attachments.length ? `<p>Attachments: ${attachments.length}</p>` : ''
+                div.innerHTML += type !== 'teacher' ?
+                    `<a href='#' style='margin-right: 10px;'>
+                        See The Assignment 
+                        <i class='fa fa-angle-right' aria-hidden="true"></i><i class='fa fa-angle-right' aria-hidden="true"></i> 
+                    </a>` :
+                    `<a href='#' style='margin-right: 10px;'>
+                        Submissions 
+                        <i class='fa fa-angle-right' aria-hidden="true"></i><i class='fa fa-angle-right' aria-hidden="true"></i> 
+                    </a>`
+                assignment_container.appendChild(div)
+            })
+        })
+        .catch(err => console.log(err))
+}
+
+export function contentAssigned() {
+    if (flagAssignment) {
+        const name = getClassUid()
+        getAssignments(name)
+    }
 }

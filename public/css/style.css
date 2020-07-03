@@ -522,7 +522,6 @@ input::-webkit-inner-spin-button {
     width: 500px;
     background: #9e9e9e;
     border-radius: 14px;
-    overflow: hidden;
     position: relative;
     text-align: center;
     color: #fff;
@@ -530,9 +529,20 @@ input::-webkit-inner-spin-button {
 .progress_fill {
     background: #1c27a9;
     height: 100%;
-    width: 50%;
     color: #fff;
+    border-radius: 14px;
+    transition: width 0.3s ease;
     position: absolute;
+}
+.progress_con .close {
+    position: absolute;
+    top: -3px;
+    right: -18px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    font-size: 20px;
+    color: #676767;
 }
 .preview_doc {
     margin: 10px 0;
@@ -557,13 +567,14 @@ input::-webkit-inner-spin-button {
     padding: 3px 8px;
     border: 1px #ccc solid;
 }
-.documents .document {
+.documents .document, .assignment_container .assignment {
     padding: 10px 20px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     margin-bottom: 20px;
 }
-.documents .document .date {
+.documents .document .date,
+.assignment_container .assignment .date {
     color: #757575;
     font-size: 13px;
 }
@@ -731,6 +742,8 @@ input::-webkit-inner-spin-button {
 */
 .assignment_container {
     display: none;
+    width: 80%;
+    margin: 20px auto;
 }
 .assign_form .students_con {
     display: grid;
@@ -761,4 +774,19 @@ input::-webkit-inner-spin-button {
 }
 .students_con div {
     margin: 10px 0;
+}
+.assignment .status {
+    padding: 5px 20px;
+    font-size: 13px;
+    border-radius: 3px;
+    color: #fff;
+    margin: 10px 0;
+    margin-right: 10px;
+    display: inline-block;
+}
+.assignment .status.done {
+    background: #276927;
+}
+.assignment .status.notdone {
+    background: #a00a0a;
 }

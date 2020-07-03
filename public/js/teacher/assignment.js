@@ -1,6 +1,6 @@
-import { getClassGroups, getClassStudents, addRemove, getAddedStudents, emptyAdded } from '../module/assignment.js'
+import { getClassGroups, getClassStudents, addRemove, getAddedStudents, emptyAdded, contentAssigned } from '../module/assignment.js'
 import { displayContainer, getClassUid } from '../module/class.js'
-import { docPreview, getDocuments, getFileNames } from '../module/docUpload.js'
+import { docPreview, getDocuments, getFileNames, emptyDocVariables } from '../module/docUpload.js'
 const assign_btn = document.querySelector('.assign_btn')
 const assigned_btn = document.querySelector('.assigned_btn')
 const assign_container = document.querySelector('.assign_container')
@@ -10,12 +10,10 @@ const assign_form = document.querySelector('.assign_form')
 const selectAll = document.querySelector('.select_all')
 const upload = document.querySelector('.upload')
 const title = document.querySelector('.title')
+const content = document.querySelector('.content')
 const submissionDate = document.querySelector('.submissionDate')
-const config = {
-    headers: {
-        'Content-Type': 'application/json'
-    }
-}
+const progress = document.querySelector('.progress_text')
+const fill = document.querySelector('.progress_fill')
 
 window.onload = async () => {
     const name = getClassUid()
@@ -23,14 +21,16 @@ window.onload = async () => {
     await getClassGroups()
 }
 
-assign_btn.addEventListener('click', e => {
+assign_btn.addEventListener('click', () => {
     if (!assign_btn.classList.contains('active'))
         displayContainer(assign_btn, assigned_btn, assign_container, assignment_container)
 })
 
-assigned_btn.addEventListener('click', e => {
-    if (!assigned_btn.classList.contains('active'))
+assigned_btn.addEventListener('click', () => {
+    if (!assigned_btn.classList.contains('active')) {
         displayContainer(assigned_btn, assign_btn, assignment_container, assign_container)
+        contentAssigned()
+    }
 })
 
 assign_docs.addEventListener('change', e => {
@@ -62,6 +62,7 @@ assign_form.addEventListener('submit', e => {
     let formData = new FormData()
     // appending data
     formData.append('title', title.value)
+    formData.append('description', content.innerHTML)
     formData.append('submissionDate', submissionDate.value)
     // if the documents are present 
     if (Object.keys(documents).length) {
@@ -78,13 +79,26 @@ assign_form.addEventListener('submit', e => {
     for (const id in added)
         formData.append('students', added[id])
 
+    const options = {
+        onUploadProgress: progressEvent => {
+            const { loaded, total } = progressEvent
+            let percent = Math.floor((loaded * 100) / total)
+            progress.innerText = `Uploading ${percent}%`
+            fill.style.width = `${percent}%`
+        }
+    }
+
     const name = getClassUid()
     // api call
-    axios.post(`/api/class/assignment?name=${name}`, formData, config)
+    axios.post(`/api/class/assignment?name=${name}`, formData, options)
         .then(res => {
-            console.log(res.data)
+            progress.innerText = res.data
+            backToNormal()
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            backToNormal()
+            console.log(err)
+        })
 })
 
 selectAll.addEventListener('change', e => {
@@ -101,3 +115,22 @@ selectAll.addEventListener('change', e => {
         addRemove(checkbox, checkBoxStatus, true)
     })
 })
+
+function backToNormal() {
+    upload.style.opacity = '1'
+    upload.disabled = false
+    emptyDocVariables()
+    emptyAdded()
+    title.value = ''
+    submissionDate.value = ''
+    content.innerHTML = ''
+    const button = document.createElement('button')
+    button.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>'
+    button.classList.add('close')
+    button.addEventListener('click', e => {
+        fill.style.width = '0'
+        progress.innerText = ''
+        e.target.remove()
+    })
+    document.querySelector('.progress_con').appendChild(button)
+}
