@@ -144,17 +144,18 @@ export function getAssignments(name) {
             res.data.forEach(assignment => {
                 const div = document.createElement('div')
                 div.classList.add('assignment')
-                const { date, title, submissionDate, attachments } = assignment
+                const { date, title, submissionDate, attachments, _id } = assignment
+                const assignmentLink = type === 'teacher' ? `/faculty/assignment/${name}/${_id}` : `/assignment/${name}/${_id}`
                 const Date = moment(date)
                 div.innerHTML = `<p class='date'>${Date.format('MMMM Do YYYY, hh:mm A')}</p> <h2>${title}</h2> 
                 <p style='font_size: 20px; color: #757575;'>Submission Date ${submissionDate}</p>`
                 div.innerHTML += attachments.length ? `<p>Attachments: ${attachments.length}</p>` : ''
                 div.innerHTML += type !== 'teacher' ?
-                    `<a href='#' style='margin-right: 10px;'>
+                    `<a href='${assignmentLink}' style='margin-right: 10px;'>
                         See The Assignment 
                         <i class='fa fa-angle-right' aria-hidden="true"></i><i class='fa fa-angle-right' aria-hidden="true"></i> 
                     </a>` :
-                    `<a href='#' style='margin-right: 10px;'>
+                    `<a href='${assignmentLink}' style='margin-right: 10px;'>
                         Submissions 
                         <i class='fa fa-angle-right' aria-hidden="true"></i><i class='fa fa-angle-right' aria-hidden="true"></i> 
                     </a>`
@@ -169,4 +170,10 @@ export function contentAssigned() {
         const name = getClassUid()
         getAssignments(name)
     }
+}
+
+export function getAssignmentId() {
+    const href = window.location.href
+    let array = href.split('/')
+    return [array[array.length - 2], array[array.length - 3]]
 }

@@ -496,9 +496,43 @@ router.get('/get/assignments/:name', async (req, res) => {
     }
 })
 
+// get a single assignment details
+router.get('/single/assignment/:name/:id', async (req, res) => {
+    if (!req.session.user) 
+        return res.send('Not Logged In')
+    
+    try {
+        const { name, id } = req.params
+        const assignment = await Assignment.findOne({ _id: id })
+            .populate('class', ['name', 'subject', 'code'])
+
+        // if no assignments found
+        if (!assignment) 
+            return res.status(404).send('No Assignment Found')
+
+        // if the class name does not matches then return error
+        if (assignment.class.name !== name)
+            return res.status(400).send('No Class exists')
+        
+        // if both the class and the assignment exists but the student id is not present in the students array
+        if (!assignment.students.includes(req.session.user._id))
+            return res.status(403).send('Not Authorized To Enter Here.')
+
+        res.status(200).send(assignment)
+    } 
+    catch (err) {
+        console.log(err)
+        if (err.kind === 'ObjectId')
+            return res.status(401).send('Incorrect Object Id')
+        res.status(500).send('Error')
+    }
+})
+
 // sample route to perfrom various experiments on mongoose
 router.get('/sample', async (req,res) => {
     // const _id = '5efb1c1f3745d358763e4f5c'
+    const className = '18DEV001J-CSE-B2-5-Batch1'
+    const ass = '5efee821eadfd92aa6802ab3'
     // const stu_id = '5efb1b8625015c5576d17938'
     // studs - 5efb1f2e863eae5b144e17d5 5efb1b8625015c5576d17938 5efb1e78863eae5b144e17d3
     // cls - 5efb1c1f3745d358763e4f5c

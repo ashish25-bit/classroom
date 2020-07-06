@@ -265,4 +265,21 @@ router.get('/request/:name', authUser, async (req, res) => {
     }
 })
 
+// get the page for a specific assigment
+router.get('/assignment/:name/:id', authUser, (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    let { pathname } = req._parsedOriginalUrl
+    if (req.params) {
+        for (let param of Object.values(req.params))
+            pathname = pathname.replace(param, '')
+    }
+    console.log(pathname)
+    res.render('faculty/Assignment', {
+        title: 'Assignment Page Faculty',
+        user: req.session.user
+    })
+})
+
 module.exports = router

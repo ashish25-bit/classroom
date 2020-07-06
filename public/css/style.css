@@ -354,6 +354,10 @@ input::-webkit-inner-spin-button {
 .assignment_main_container .btn_con {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+
 }
 .main_class_container .btn_con button,
 .assignment_main_container .btn_con button {
@@ -444,7 +448,7 @@ input::-webkit-inner-spin-button {
 }
 .announcement {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-    padding: 10px;
+    padding: 10px 20px;
     border-radius: 10px;
     width: 100%;
     margin-bottom: 10px;
@@ -544,23 +548,24 @@ input::-webkit-inner-spin-button {
     font-size: 20px;
     color: #676767;
 }
-.preview_doc {
+.preview_doc, .single_assignment_con .box2 {
     margin: 10px 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 30px;
     justify-content: space-evenly;
 }
-.preview_doc div {
-    height: 170px;
+.preview_doc div, .single_assignment_con .box2 .docImg {
+    height: 230px;
     cursor: pointer;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 10px;
 }
-.preview_doc .docImg img {
+.preview_doc .docImg img,
+.single_assignment_con .box2 .docImg img {
     width: 90%;
-    height: 80%;
+    height: 70%;
     object-fit: contain;
 }
 .preview_doc .docImg input {
@@ -578,9 +583,19 @@ input::-webkit-inner-spin-button {
     color: #757575;
     font-size: 13px;
 }
-.preview_doc .docImg p {
+.preview_doc .docImg p,
+.single_assignment_con .box2 .docImg p {
     width: 285px;
     overflow: hidden;
+    height: 25px;
+    margin-bottom: 10px;
+}
+.preview_doc .docImg .download,
+.single_assignment_con .box2 .docImg .download {
+    padding: 5px 10px;
+    background: #ccc;
+    color: #555;
+    border-radius: 50%;
 }
 /* 
     Message Room
@@ -661,13 +676,14 @@ input::-webkit-inner-spin-button {
     border-radius: 20px;
 }
 .class_message_detail_container .details .back_link .fa-arrow-left,
-.assignment_main_container .details .back_link .fa-arrow-left {
+.assignment_main_container .details .back_link .fa-arrow-left,
+.single_assignment_con .back_link .fa-arrow-left {
     padding: 9px 10px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
     border-radius: 50%;
     font-size: 13px;
     position: relative;
-    bottom: 2px;
+    bottom: 4px;
     color: black;
 }
 
@@ -788,5 +804,32 @@ input::-webkit-inner-spin-button {
     background: #276927;
 }
 .assignment .status.notdone {
+    background: #a00a0a;
+}
+.single_assignment_con {
+    width: 90%;
+    margin: 10px auto;
+    padding: 10px 30px;    
+}
+.single_assignment_con .box, 
+.single_assignment_con .box2 {
+    border: 1.5px #ccc solid;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+.single_assignment_con .head {
+    margin-top: 15px;
+}
+.single_assignment_con .box .status {
+    padding: 5px 10px;
+    font-size: 13px;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 4px;
+}
+.single_assignment_con .box .status.done {
+    background: #276927;
+}
+.single_assignment_con .box .status.notdone {
     background: #a00a0a;
 }

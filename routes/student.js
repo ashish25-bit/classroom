@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
         req.session.user = user
         req.session.type = student
-        res.redirect(`/classroom/assignment/18DEV001J-CSE-B2-5-Batch1`)
+        res.redirect(`/assignment/18DEV001J-CSE-B2-5-Batch1/5efee821eadfd92aa6802ab3/`)
     }
     catch (err) {
         console.log(err)
@@ -248,6 +248,17 @@ router.get('/requests', authUser, async (req, res) => {
             msg: 'Server Error'
         })
     }
+})
+
+// get the page for a specific assigment
+router.get('/assignment/:name/:id', authUser, (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    res.render('student/Assignment', {
+        title: 'Assignment Page Student',
+        user: req.session.user
+    })
 })
 
 module.exports = router

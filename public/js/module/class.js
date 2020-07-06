@@ -109,6 +109,7 @@ export function getDocuments(name) {
                 let preview = ''
                 attachments.forEach((pic, index) => {
                     const ext = pic.substring(pic.lastIndexOf('.') + 1, pic.length)
+                    const filename = fileName[index].endsWith(`.${ext}`) ? fileName[index] : `${fileName[index]}.${ext}`
                     preview += `<div class='docImg'>`
                     if (extensions.includes(ext)) {
                         const index = extensions.indexOf(ext)
@@ -116,7 +117,9 @@ export function getDocuments(name) {
                     }
                     else 
                         preview += `<img src='../../documents/${name}/${pic}' />`
-                    preview += `<p>${fileName[index]}</p></div>`
+                    preview += `<p>${fileName[index]}</p>`
+                    preview += `<a class='download' href='../../documents/${name}/${pic}' download='${filename}'>
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i></a></div>`
                 })            
                 div.innerHTML += `<div class='preview_doc'>${preview}</div>`
                 documents.appendChild(div) 
