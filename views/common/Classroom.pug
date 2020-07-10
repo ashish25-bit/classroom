@@ -26,7 +26,10 @@ block content
             a(href=`/classroom/message/room/${cls.name}` style='margin-right: 10px;')= `Message Room `
                 i(class='fa fa-angle-right' aria-hidden="true")
                 i(class='fa fa-angle-right' aria-hidden="true")
-            a(href=`/classroom/assignment/${cls.name}`)= `Assignments `
+            a(href=`/classroom/assignment/${cls.name}` style='margin-right: 10px;')= `Assignments `
+                i(class='fa fa-angle-right' aria-hidden="true")
+                i(class='fa fa-angle-right' aria-hidden="true")
+            a(href=`/classroom/video/room/${cls.name}`)= type === 'teacher' ? 'Host A Video Call ' : 'Join Video Call '
                 i(class='fa fa-angle-right' aria-hidden="true")
                 i(class='fa fa-angle-right' aria-hidden="true")
 

@@ -761,7 +761,7 @@ input::-webkit-inner-spin-button {
     width: 80%;
     margin: 20px auto;
 }
-.assign_form .students_con {
+.assign_form .students_con, .single_assignment_con .assigned .students_con {  
     display: grid;
     grid-template-columns: repeat(5, 1fr);
 }
@@ -832,4 +832,11 @@ input::-webkit-inner-spin-button {
 }
 .single_assignment_con .box .status.notdone {
     background: #a00a0a;
+}
+.single_assignment_con .assigned {
+    padding: 5px 10px;
+    border: 1.5px #ccc solid;
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
 }

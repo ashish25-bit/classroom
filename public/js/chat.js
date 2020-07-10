@@ -55,8 +55,9 @@ function selectGroup(e) {
         const name = e.target.getAttribute('data-class-name')
         e.target.classList.add('active')
         window.history.replaceState("/classroom/message/room", "Message Room", `/classroom/message/room/${name}`)
-        details.innerHTML = `<h1>Loading</h1>`
-        messages.innerHTML = '<h3>Loading</h3>'
+        details.innerHTML = `<h1>Loading...</h1>`
+        console.log('object')
+        messages.innerHTML = `<h3>Loading...</h3>`
         getDetails(name)
         getMessages(name)
     }
@@ -89,9 +90,9 @@ function getDetails(name) {
 }
 
 function getMessages(name) {
-    messages.innerHTML = ''
     axios.get(`/api/get/group/messages/${name}`)
         .then(res => {
+            messages.innerHTML = ''
             const { messages: msgs, your_id: id, msg } = res.data
             if (msg == undefined) {
                 msgs.forEach(data => {

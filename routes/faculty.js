@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = user
         req.session.type = teacher
-        res.redirect(`/classroom/assignment/18DEV001J-CSE-B2-5-Batch1`)
+        res.redirect(`/faculty/assignment/18DEV001J-CSE-B2-5-Batch1/5efee821eadfd92aa6802ab3/`)
     }
     catch (err) {
         console.log(err)
@@ -270,12 +270,6 @@ router.get('/assignment/:name/:id', authUser, (req, res) => {
     if (!req.session.user)
         return res.redirect('/')
 
-    let { pathname } = req._parsedOriginalUrl
-    if (req.params) {
-        for (let param of Object.values(req.params))
-            pathname = pathname.replace(param, '')
-    }
-    console.log(pathname)
     res.render('faculty/Assignment', {
         title: 'Assignment Page Faculty',
         user: req.session.user

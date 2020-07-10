@@ -7,6 +7,8 @@ const selectAll = document.querySelector('.select_all')
 const students = document.querySelector('.students_con')
 let added = []
 let flagAssignment = 1
+export const extensions = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx']
+export const extImg = ['document.svg', 'pdf.svg', 'word.svg', 'word.svg', 'powerpoint.svg', 'powerpoint.svg']
 
 export async function getClassGroups() {
     try {
@@ -148,7 +150,7 @@ export function getAssignments(name) {
                 const assignmentLink = type === 'teacher' ? `/faculty/assignment/${name}/${_id}` : `/assignment/${name}/${_id}`
                 const Date = moment(date)
                 div.innerHTML = `<p class='date'>${Date.format('MMMM Do YYYY, hh:mm A')}</p> <h2>${title}</h2> 
-                <p style='font_size: 20px; color: #757575;'>Submission Date ${submissionDate}</p>`
+                <p style='font_size: 20px; color: #757575;'>Submission Date ${moment(submissionDate).format('MMMM Do, YYYY')}</p>`
                 div.innerHTML += attachments.length ? `<p>Attachments: ${attachments.length}</p>` : ''
                 div.innerHTML += type !== 'teacher' ?
                     `<a href='${assignmentLink}' style='margin-right: 10px;'>
@@ -176,4 +178,43 @@ export function getAssignmentId() {
     const href = window.location.href
     let array = href.split('/')
     return [array[array.length - 2], array[array.length - 3]]
+}
+
+export function sendAssignmentTemplate({ attachments, class: cls, fileName, description, title, submissionDate, date }) {
+    const Date = moment(submissionDate)
+    let content = `<h1 style='font-size:1.7rem;'>
+        <a title='Back to class' class='back_link' href='/classroom/${cls.name}'>
+            <i class='fa fa-arrow-left' aria-hidden='true'></i>
+        </a>
+            ${cls.subject}
+    </h1>
+    <p style='margin-left: 40px; font-size:13px; color: #797979;'>Uploaded On: ${moment(date).format('DD MMMM, YYYY')}</p>
+    <p style='margin-left: 40px;'>${cls.code}</p>
+    <hr style='margin: 10px 0; border: 1px soild #555;' />
+    <h2>${title}</h2>`
+    if (description !== '') 
+        content += `<h4 class='head'>Description</h4> <div class='box'>${description}</div>`
+
+    content +=  `<h4 class='head'>Submission Date</h4> <div class='box'>${Date.format('DD MMMM, YYYY')}</div>`
+    if (attachments.length) {
+        content += `<h4 class='head'>Attachments</h4>`
+        let attachmentContent = ''
+        attachments.forEach((pic, index) => {
+            const ext = pic.substring(pic.lastIndexOf('.') + 1, pic.length)
+            attachmentContent += `<div class='docImg'>`
+            if (extensions.includes(ext)) {
+                const index = extensions.indexOf(ext)
+                attachmentContent += `<img src='../public/assets/${extImg[index]}' />`
+            }
+            else 
+                attachmentContent += `<img src='../../assignments/${name}/${pic}' />`
+            attachmentContent += `<p>${fileName[index]}</p>
+                <a href='../../assignments/${name}/${pic}' download='${fileName}' class='download'>
+                    <i class='fa fa-arrow-down' aria-hidden="true"></i>
+                </a>
+            </div>`
+        })
+        content += `<div class='box2'>${attachmentContent}</div>`
+    }
+    return content
 }

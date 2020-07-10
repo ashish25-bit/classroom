@@ -2,3 +2,15 @@ extends ../layouts/Layout
 block content
     include ../layouts/HeaderTeacher
     
+    .single_assignment_con 
+        .details    
+            h2 Loading...
+        <hr style='margin: 30px 0; border: 1px soild #555;' />
+        .submissions
+            h2 Loading... 
+        <hr style='margin: 30px 0; border: 1px soild #555;' />
+        .all_students
+            h2 Loading... 
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+    script(src="js/teacher/oneAssignment.js" type='module')

@@ -8,6 +8,7 @@ const http = require('http')
 // const https = require('https')
 const connectDb = require('./core/db')
 const { joinRoom, showRoom, removeUser } = require('./utils/chat')
+const { makeRoom, joinVideoRoom }  = require('./utils/video')
 
 // const options = {
 //     key: fs.readFileSync('./server.key'),
@@ -36,6 +37,7 @@ app.use('/faculty/register', express.static('public'))
 app.use('/faculty/request', express.static('public'))
 app.use('/classroom', express.static('public'))
 app.use('/classroom/message/room/', express.static('public'))
+app.use('/classroom/video/room/', express.static('public'))
 app.use('/classroom/assignment/', express.static('public'))
 app.use('/assignment/:name/:id', express.static('public'))
 app.use('/faculty/assignment/:name/:id', express.static('public'))
@@ -74,6 +76,12 @@ app.use((req, res, next) => {
 
 // socket connections
 io.on('connection', socket => {
+
+    /**
+     * Socket Routes
+     * For Chat Applications
+    */
+
     // join the chat room 
     socket.on('joinRoom', rooms => {
         rooms.forEach(room => {
@@ -90,6 +98,27 @@ io.on('connection', socket => {
 
     // receive the message
     socket.on('sendMessage', info => socket.broadcast.to(info.room).emit('message', info))
+
+    /**
+     * Socket Routes
+     * For Video Applications
+    */
+    socket.on('makeVideoRoom', info => {
+        const { type } = info
+        if (type === 'teacher') {
+            const res = makeRoom(info.name, info.room)
+        }
+        // else {
+        //     const res = joinVideoRoom(info.room)
+        //     console.log(res)
+        //     socket.emit('roomMsg', res)
+        // }
+    })
+
+    socket.on('cancelRoom', info => {
+        console.log('cancelling the room')
+    })
+
 })
 
 //handling error

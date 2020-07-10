@@ -12,6 +12,7 @@ const Message = require('../models/Messages')
 const Student = require('../models/Student')
 const Sample = require('../models/Sample')
 const Assignment = require('../models/Assignment')
+const Submission = require('../models/Submission')
 const mailer = require('../private/nodemailer')
 const { student } = require('../secret')
 
@@ -523,52 +524,136 @@ router.get('/single/assignment/:name/:id', async (req, res) => {
     catch (err) {
         console.log(err)
         if (err.kind === 'ObjectId')
-            return res.status(401).send('Incorrect Object Id')
+            return res.status(400).send('Incorrect Assignment Id')
         res.status(500).send('Error')
+    }
+})
+
+// verification of the class and to authorization to access the video room
+router.get('/get/authorization/:name', async (req, res) => {
+    if (!req.session.user)
+        return res.send('Not Logged In')
+    
+    try {
+        const type = req.session.type === student ? 'student' : 'teacher'
+        const { name } = req.params
+        const cls = await Class.findOne({ name })
+        
+        // if the class does not exists
+        if (!cls)
+            return res.status(404).send('No Class Found')
+
+        // if teacher
+        if (type === 'teacher') {
+            // if not authorized
+            if (`${cls.teacher}` !== req.session.user._id)
+                return res.status(403).send('Not Authorized To Enter The Room')
+            // if authorized
+            return res.status(200).json({ type, name: req.session.user.name })
+        }
+        
+        //  if student
+        if (!cls.students.includes(req.session.user._id)) 
+            return res.status(403).send('Not Authorized To Enter The Room')
+        res.json({ type, regNo: req.session.user.regno })    
+    } 
+    catch (err) {
+        console.log(err)
+        res.status(500).send('Server Error')
     }
 })
 
 // sample route to perfrom various experiments on mongoose
 router.get('/sample', async (req,res) => {
-    // const _id = '5efb1c1f3745d358763e4f5c'
     const className = '18DEV001J-CSE-B2-5-Batch1'
     const ass = '5efee821eadfd92aa6802ab3'
-    // const stu_id = '5efb1b8625015c5576d17938'
-    // studs - 5efb1f2e863eae5b144e17d5 5efb1b8625015c5576d17938 5efb1e78863eae5b144e17d3
+    // studs - '5efb1f2e863eae5b144e17d5', '5efb1b8625015c5576d17938', '5efb1e78863eae5b144e17d3'
     // cls - 5efb1c1f3745d358763e4f5c
-    try {
-        // const cls = await Class.findOne({ _id })
-        // cls.requests = []
-        // await cls.save()
-
-        // const user = await Student.findOne({ _id: stu_id })
-        // user.requests = []
-        // await user.save()
-        // res.send('Done')
-
-        // await new Sample({
-        //     class: _id,
-        //     students: stu_id
-        // }).save()
-        // res.send('Done')
-        
+    try {        
         // const sample = await Sample.find({ students: { $in: stu_id } })
         //     .populate('class', ['name'])
         //     .select(['-students', '-__v'])
         //     .sort({ date: -1 })
         // res.send(sample)
-        
-        // const { students } = await Sample.findOne({ _id: '5efe17eea735bb1ae59e7c40' }).select('students')
-        // const emails = await Student.find({ _id: { $in: students } })
-        //     .distinct('email')
-        // mailer(emails.toString(), 'Sample', 'Blind carbon copy mail. Please Ignore.')
-        // res.send(emails.toString())
+
+        // for a new submission
+        // const cls = await Class.findOne({ name: className })
+        // const newSub = new Submission({
+        //     assignment: ass,
+        //     status: 'on time', 
+        //     student: '5efb1f2e863eae5b144e17d5',
+        //     class: cls._id
+        // })
+        // await newSub.save()
+        // res.send('Done')
     } 
     catch (err) {
         console.log(err)
         res.send('Error')    
     }
 })
+
+// get the students and the assignment details as well as the submissions
+router.get('/faculty/single/assignment/:name/:id', async (req, res) => {
+    if (!req.session.user)
+        return res.send('Not Logged in')
+    
+    try {
+        const { id, name } = req.params
+        const assignment = await Assignment.findOne({ _id: id })
+            .populate('class', ['name', 'subject', 'code', 'teacher'])
+        
+        if (!assignment) 
+            return res.status(404).send('Assignment not found')
+
+        // if the class name does not matches then return error
+        if (assignment.class.name !== name)
+            return res.status(400).send('No Class exists')
+        
+        // if the faculty accessing the route is not the teacher of the class
+        if (`${assignment.class.teacher}` !== req.session.user._id)
+            return res.status(403).send('Not Authorized To Enter This Class')
+
+        // response.status(code).send(new Error('description'));
+
+        const students = await Student.find({ _id: { $in: assignment.students } }).select('regno')
+        res.status(200).json({ assignment, students })
+    } 
+    catch (err) {
+        console.log(err)
+        if (err.kind === 'ObjectId')
+            return res.status(400).send('Incorrect Assignment Id')
+        res.status(500).send('Error')
+    }
+})
+
+// get the students who have submitted the assignment
+router.get('/submission/:name/:id', async (req, res) => {
+    if (!req.session.user) 
+        return res.send('Not Logged In')
+    
+    try {
+        const { name, id } = req.params
+        const cls = await Class.findOne({ name })
+
+        if (!cls)
+            return res.status(404).send('Class not found')
+
+        const submission = await Submission.find({ $and: [{ class: cls._id }, { assignment: id }] })
+            .populate('student', ['regno', 'name'])
+            .select(['-_id', '-assignment', '-class'])
+        if (!submission)
+            return res.status(404).send('No submissions found')
+        res.status(200).send(submission)
+    } 
+    catch (err) {
+        console.log(err)
+        if (err.kind === 'ObjectId')
+            return res.status(400).send('Incorrect Assignment Id')
+        res.status(500).send('Error')
+    }
+})
+
 
 // returns the regex expression
 function escapeRegex(text) {
