@@ -182,9 +182,12 @@ input::-webkit-inner-spin-button {
     font-weight: bold;
 }
 .add_class_form a .fa-arrow-left {
-    padding: 10px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+    font-size: 13px;
+    padding: 8px ;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     border-radius: 50%;
+    position: relative;
+    top: -3px;
 }
 .add_class_form .field .empty_input {
     color: red;
@@ -501,7 +504,8 @@ input::-webkit-inner-spin-button {
     border-radius: 10px;    
 }
 .document_input_con .upload,
-.assign_form .upload {
+.assign_form .upload ,
+.submit_assignment .upload {
     margin: 5px 0;
     padding: 5px 10px;
     background: #000;
@@ -509,7 +513,9 @@ input::-webkit-inner-spin-button {
     text-transform: uppercase;
     border: none;
 }
-.document_input_con #documents, .assign_form #assign_docs {
+.document_input_con #documents, 
+.assign_form #assign_docs,
+.submit_assignment #documents {
     display: none;
 }
 .label_doc_input, .label_assign_docs {
@@ -806,7 +812,7 @@ input::-webkit-inner-spin-button {
 .assignment .status.notdone {
     background: #a00a0a;
 }
-.single_assignment_con {
+.single_assignment_con, .submission_con {
     width: 90%;
     margin: 10px auto;
     padding: 10px 30px;    

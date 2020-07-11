@@ -16,7 +16,6 @@ const docContext = document.querySelector('.doc_context')
 const progress = document.querySelector('.progress_text')
 const fill = document.querySelector('.progress_fill')
 const upload = document.querySelector('.upload')
-const previewContainer = document.querySelector('.preview_doc')
 let flagAnnouncement = 1
 
 docs_btn.addEventListener('click', () => {

@@ -475,6 +475,81 @@ router.post('/class/assignment', async (req, res) => {
     })
 })
 
+// submit assignment
+router.post('/submit/assignment/:name/:id', async (req, res) => {
+    const { name, id } = req.params
+    if (!fs.existsSync(`./public/submissions/${name}`))
+        await fs.mkdirSync(`./public/submissions/${name}`)
+
+    let storage = multer.diskStorage({
+        destination: `./public/submissions/${name}`,
+        filename: (req, file, cb) => {
+            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
+        }
+    })
+
+    const upload = multer({ storage: storage }).array('submissionFile')
+    upload(req, res, async err => {
+        if (err) {
+            console.log(err)
+            return res.status(500).send('Server Error')
+        }
+        
+        try {
+            const { fileName } = req.body
+            // check the assignment id 
+            const assignment = await Assignment.findOne({ _id: id })
+            if (!assignment)
+                return res.status(404).send('Assignment not found')
+
+            // check the class
+            const cls = await Class.findOne({ name })
+            if (!cls)
+                return res.status(404).send('Class not found')
+
+            // if everything is okay then enter the data in the database
+            let attachments = []
+            for (let i = 0; i < req.files.length; i++)
+                attachments.push(req.files[i].filename)
+            const submission = new Submission({
+                class: cls._id,
+                attachments,
+                fileName,
+                assignment: id,
+                student: req.session.user._id
+            })
+            await submission.save()
+            res.send('Submitted')
+        } 
+        catch (err) {
+            console.log(err)
+            if (err.kind === 'ObjectId')
+                return res.status(400).send('Invalid Assignment Id')
+            res.status(500).send('Server error')
+        }
+    })
+})
+
+// submission status
+router.get('/submission/status/:id', async (req, res) => {
+    if (!req.session.user)
+        return res.send('Not Logged In')
+    
+    try {
+        const { id } = req.params    
+        const submission = await Submission.findOne({ $and: [{ assignment: id }, { student: req.session.user._id }] })
+        if (!submission)
+            return res.status(204).send('No submission found')
+        res.status(200).send(submission)
+    } 
+    catch (err) {
+        console.log(err)
+        if (err.kind === 'ObjectId')
+            return res.status(400).send('Invalid Assignment Id')
+        res.status(500).send('Error')
+    }
+})
+
 // get the annoucements
 router.get('/get/assignments/:name', async (req, res) => {
     if (!(req.session.user))
@@ -524,7 +599,7 @@ router.get('/single/assignment/:name/:id', async (req, res) => {
     catch (err) {
         console.log(err)
         if (err.kind === 'ObjectId')
-            return res.status(400).send('Incorrect Assignment Id')
+            return res.status(400).send('Invalid Assignment Id')
         res.status(500).send('Error')
     }
 })
@@ -564,7 +639,7 @@ router.get('/get/authorization/:name', async (req, res) => {
 })
 
 // sample route to perfrom various experiments on mongoose
-router.get('/sample', async (req,res) => {
+router.get('/sample', async (req, res) => {
     const className = '18DEV001J-CSE-B2-5-Batch1'
     const ass = '5efee821eadfd92aa6802ab3'
     // studs - '5efb1f2e863eae5b144e17d5', '5efb1b8625015c5576d17938', '5efb1e78863eae5b144e17d3'
@@ -580,8 +655,7 @@ router.get('/sample', async (req,res) => {
         // const cls = await Class.findOne({ name: className })
         // const newSub = new Submission({
         //     assignment: ass,
-        //     status: 'on time', 
-        //     student: '5efb1f2e863eae5b144e17d5',
+        //     student: '5efb1b8625015c5576d17938',
         //     class: cls._id
         // })
         // await newSub.save()
@@ -622,7 +696,7 @@ router.get('/faculty/single/assignment/:name/:id', async (req, res) => {
     catch (err) {
         console.log(err)
         if (err.kind === 'ObjectId')
-            return res.status(400).send('Incorrect Assignment Id')
+            return res.status(400).send('Invalid Assignment Id')
         res.status(500).send('Error')
     }
 })
@@ -649,7 +723,7 @@ router.get('/submission/:name/:id', async (req, res) => {
     catch (err) {
         console.log(err)
         if (err.kind === 'ObjectId')
-            return res.status(400).send('Incorrect Assignment Id')
+            return res.status(400).send('Invalid Assignment Id')
         res.status(500).send('Error')
     }
 })

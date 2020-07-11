@@ -1,4 +1,3 @@
-const previewContainer = document.querySelector('.preview_doc')
 const extImg = ['pdf.svg', 'document.svg', 'powerpoint.svg', 'word.svg', 'powerpoint.svg']
 const extensions = [
     'application/pdf', 'text/plain', 'application/vnd.ms-powerpoint',
@@ -9,6 +8,7 @@ let documents = {}
 let fileNames = {}
 
 export function docPreview(file) {
+    const previewContainer = document.querySelector('.preview_doc')
     const rnd = random()
     documents[rnd] = file
     fileNames[rnd] = file.name
@@ -66,5 +66,5 @@ function changeDocName(e) {
 export function emptyDocVariables() {
     documents = {}
     fileNames = {}
-    previewContainer.innerHTML = ''
+    document.querySelector('.preview_doc').innerHTML = ''
 }

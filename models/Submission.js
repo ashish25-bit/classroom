@@ -6,16 +6,16 @@ const SubmissionSchema = new mongoose.Schema({
         ref: 'class',
         required: true
     },
-    attachment: [],
+    attachments: [],
     fileName: [],
     submitted: {
         type: Date, 
         default: Date.now(),
         required: true
     },
-    status: {
-        type: String,
-        required: true
+    checked: {
+        type: Boolean,
+        default: false
     },
     student: {
         type: mongoose.Schema.Types.ObjectId,

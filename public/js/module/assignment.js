@@ -209,7 +209,7 @@ export function sendAssignmentTemplate({ attachments, class: cls, fileName, desc
             else 
                 attachmentContent += `<img src='../../assignments/${name}/${pic}' />`
             attachmentContent += `<p>${fileName[index]}</p>
-                <a href='../../assignments/${name}/${pic}' download='${fileName}' class='download'>
+                <a href='../../assignments${name}/${pic}' download='${fileName}' class='download'>
                     <i class='fa fa-arrow-down' aria-hidden="true"></i>
                 </a>
             </div>`

@@ -4,6 +4,7 @@ config/default.json
 secret.js
 public/documents
 public/assignments
+public/submissions
 bugs.txt
 secret.cert
 secret.key
