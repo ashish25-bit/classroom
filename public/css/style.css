@@ -846,3 +846,65 @@ input::-webkit-inner-spin-button {
     max-height: 200px;
     overflow-y: auto;
 }
+.single_assignment_con .submission {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+.submission .status {
+    position: relative;
+    width: 70px;
+    height: 40px;
+    -webkit-appearance: none;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer; 
+    top: 15px;
+    border: 1px solid #676767;
+}
+.submission .status::before {
+    content: 'Check';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #676767;
+    font-weight: bold;
+}
+.submission .status:checked {
+    background: #009595;
+    border: 0px #009595 solid;
+}
+.submission .status:checked::before {
+    color: #fff;
+    content: 'Checked';
+}
+.submission  .file_con {
+    margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 10px;
+}
+.submission .file_con .img {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+.submission .file_con img {
+    width: 40%;
+}
+.submission .time {
+    padding: 5px 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 5px;
+}
+.submission .time.on {
+    background: #1f711f;
+}
+.submission .time.late {
+    background: #cc3636;
+}

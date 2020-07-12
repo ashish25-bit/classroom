@@ -26,7 +26,13 @@ const SubmissionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'class',
         required: true
+    },
+    status: {
+        type: Boolean,
+        required: true
     }
+    // if false -> means late submission
+    // if true -> means submission on time
 })
 
 module.exports = Submission = mongoose.model('submission', SubmissionSchema)

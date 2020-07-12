@@ -3,6 +3,7 @@ const router = express.Router()
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const moment = require('moment')
 
 const subjects = require('../private/subjects')
 const Class = require('../models/Class')
@@ -516,7 +517,8 @@ router.post('/submit/assignment/:name/:id', async (req, res) => {
                 attachments,
                 fileName,
                 assignment: id,
-                student: req.session.user._id
+                student: req.session.user._id,
+                status: moment(assignment.date, 'YYYY-MM-DD').isBefore(Date.now())
             })
             await submission.save()
             res.send('Submitted')
