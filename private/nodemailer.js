@@ -14,7 +14,7 @@ module.exports = async (mail, subject, text) => {
         return true
     } 
     catch (err) {
-        console.log(err)
+        console.log(err.message)
         return false
     }
 }

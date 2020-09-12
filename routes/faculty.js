@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = user
         req.session.type = teacher
-        res.redirect(`/faculty/assignment/18DEV001J-CSE-B2-5-Batch1/5efee821eadfd92aa6802ab3/`)
+        res.redirect(`/faculty/home`)
     }
     catch (err) {
         console.log(err)
@@ -96,46 +96,28 @@ router.post('/register', async (req, res) => {
             })
         }
 
-        // verifying the email
-        let verifier = new Verifier(config.get('WHO_API_KEY'))
+        user = new Teacher({
+            name,
+            email,
+            password,
+            faculty_id,
+            position,
+            department
+        }) 
 
-        verifier.verify(email, async (err, data) => {
-            if (err)
-                return res.render('faculty/Signup', {
-                    title: 'Register - Faculty',
-                    error: 'Server Error'
-                })
+        const salt = await bcrypt.genSalt(10)
+        user.password = await bcrypt.hash(password, salt)
+        await user.save()
 
-            if (data.smtpCheck === 'false')
-                return res.render('faculty/Signup', {
-                    title: 'Register - Faculty',
-                    error: 'Entered Email does not exists.'
-                })
+        // sending the mail
+        const subject = 'Welcome To SRM-GCR'
+        const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
+        mailer(email, subject, text)
 
-            // entering the data in the database
-            user = new Teacher({
-                name,
-                email,
-                password,
-                faculty_id,
-                position,
-                department
-            })
-
-            const salt = await bcrypt.genSalt(10)
-            user.password = await bcrypt.hash(password, salt)
-            await user.save()
-
-            // sending the mail
-            const subject = 'Welcome To SRM-GCR'
-            const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
-            mailer(email, subject, text)
-
-            // setting the session
-            req.session.user = user
-            req.session.type = teacher
-            res.redirect(`/faculty/home`)
-        })
+        // setting the session
+        req.session.user = user
+        req.session.type = teacher
+        res.redirect(`/faculty/home`)
     }
     catch (err) {
         console.log(err)

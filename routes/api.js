@@ -90,7 +90,7 @@ router.post('/request/class', async (req, res) => {
         res.status(200).json('Requested')
     }
     catch (err) {
-        console.log(err)
+        console.log(err.message)
         res.status(500).send('Server Error')
     }
 })
@@ -147,7 +147,6 @@ router.put('/accept/course/request', async (req, res) => {
         student.classes.push(cls._id)
         await cls.save()
         await student.save()
-        req.session.user = student
         res.status(200).send('Request Accepted')
     }
     catch (err) {
@@ -562,11 +561,26 @@ router.get('/get/assignments/:name', async (req, res) => {
         const cls = await Class.findOne({ name }).select('_id')
         if (!cls)
             return res.status(400).send('No classes found')
-
-        const assignments = await Assignment
-            .find({ class: cls._id })
-            .sort({ date: -1 })
-        res.status(200).send(assignments)
+        
+        const type = req.session.type === student ? 'student' : 'teacher'
+        if (type == 'student') {
+            const stud_id = req.session.user._id
+            const assignments = await Assignment
+                .find({
+                    $and: [
+                        { students: { $in: [stud_id] } },
+                        { class: cls._id }
+                    ]
+                })
+                .sort({ date: -1 })
+            res.status(200).send(assignments)
+        }
+        else {
+            const assignments = await Assignment
+                .find({ class: cls._id })
+                .sort({ date: -1 })
+            res.status(200).send(assignments)
+        }
     } 
     catch (err) {
         console.log(err)

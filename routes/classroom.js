@@ -115,14 +115,4 @@ router.get('/assignment/:name', async (req, res) => {
     }
 })
 
-// video route
-router.get('/video/room/:name', (req, res) => {
-    if (!req.session.user)
-        return res.redirect('/')
-    
-    res.render('common/Video', {
-        title: 'Video Room'
-    })
-})
-
 module.exports = router

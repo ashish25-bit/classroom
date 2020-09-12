@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
         req.session.user = user
         req.session.type = student
-        res.redirect(`/assignment/18DEV001J-CSE-B2-5-Batch1/5efee821eadfd92aa6802ab3/`)
+        res.redirect(`/home`)
     }
     catch (err) {
         console.log(err)
@@ -109,48 +109,31 @@ router.post('/register', async (req, res) => {
             })
         }
 
-        // verifying the email
-        let verifier = new Verifier(config.get('WHO_API_KEY'))
-
-        verifier.verify(email, async (err, data) => {
-            if (err)
-                return res.render('student/Signup', {
-                    title: 'Register - Student',
-                    error: 'Server Error'
-                })
-
-            if (data.smtpCheck === 'false')
-                return res.render('student/Signup', {
-                    title: 'Register - Student',
-                    error: 'Entered Email does not exists.'
-                })
-
-            // entering the data in the database
-            user = new Student({
-                name,
-                email,
-                password,
-                regno,
-                semester,
-                department,
-                batch,
-                section
-            })
-
-            const salt = await bcrypt.genSalt(10)
-            user.password = await bcrypt.hash(password, salt)
-            await user.save()
-
-            // sending the mail
-            const subject = 'Welcome To SRM-GCR'
-            const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
-            mailer(email, subject, text)
-
-            // setting the session
-            req.session.user = user
-            req.session.type = student
-            res.redirect(`/home`)
+        // entering the data in the database
+        user = new Student({
+            name,
+            email,
+            password,
+            regno,
+            semester,
+            department,
+            batch,
+            section
         })
+
+        const salt = await bcrypt.genSalt(10)
+        user.password = await bcrypt.hash(password, salt)
+        await user.save()
+
+        // sending the mail
+        const subject = 'Welcome To SRM-GCR'
+        const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
+        mailer(email, subject, text)
+
+        // setting the session
+        req.session.user = user
+        req.session.type = student
+        res.redirect(`/home`)
     }
     catch (err) {
         console.log(err)
@@ -222,7 +205,7 @@ router.get('/requests', authUser, async (req, res) => {
 
         const cls = await Class.find({ _id: { $in: requests } })
             .populate('teacher', ['name', 'faculty_id'])
-            .select(['subject', 'code'])
+            .select(['subject', 'code', 'name'])
 
         if (!cls.length)
             return res.render('student/Requests', {
@@ -260,5 +243,13 @@ router.get('/assignment/:name/:id', authUser, (req, res) => {
         user: req.session.user
     })
 })
+
+router.get('/empty', async (req, res) => {
+    const r1 = await Class.updateMany({}, { $set: { students: [] } })
+    const r = await Student.updateMany({}, { $set: { classes: [] } })
+    res.send(r)
+})
+
+// http://localhost:3000/empty
 
 module.exports = router

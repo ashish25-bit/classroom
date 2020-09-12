@@ -11,7 +11,6 @@ window.onload = () => {
 
     // ajax call here
     const name = getClassId()
-    // id.getAttribute('data-class-id')
     axios.get(`/api/request/students/${name}`)
         .then(res => {
             container.innerHTML = ''

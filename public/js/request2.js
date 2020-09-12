@@ -8,12 +8,13 @@ let response_msg = document.querySelector('.response_msg')
 
 if(buttons) {
     buttons.forEach(button => {
+        
         button.addEventListener('click', e => {
-            const id = e.target.getAttribute('data-class-id')
+            const name = e.target.getAttribute('data-class-name')
             button.style.opacity = 0.5
             button.disabled = true
             const parent = e.target.parentElement
-            axios.post('/api/request/class', { id }, config)
+            axios.post('/api/request/class', { name }, config)
                 .then(res => {
                     if (res.status !== 200) {
                         showResponse('Server Error')
@@ -32,7 +33,6 @@ if(buttons) {
                     button.disabled = false
                     showResponse('Server Error')
                 })
-                
         })
     })
 }

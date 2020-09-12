@@ -25,11 +25,11 @@ form.addEventListener('submit', async e => {
     }
 
     // validating srm email
-    else if (!email.value.endsWith('@srmist.edu.in')) {
-        e.preventDefault()
-        btnEnable()
-        return error.innerText = 'Valid SRM Email is required'
-    }
+    // else if (!email.value.endsWith('@srmist.edu.in')) {
+    //     e.preventDefault()
+    //     btnEnable()
+    //     return error.innerText = 'Valid SRM Email is required'
+    // }
 
     // if everything is okay
     form.setAttribute('action', '/register')

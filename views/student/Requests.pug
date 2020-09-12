@@ -14,7 +14,7 @@ block content
                     h2= request.subject
                     p= `Code: ${request.code}`
                     p= `Faculty: ${request.teacher.name} (${request.teacher.faculty_id})`
-                    button(class='cancel' data-class-id=request._id) Cancel Request
+                    button(class='cancel' data-class-name=request.name) Cancel Request
             -})
 
     script(src="js/request2.js")
