@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const path = require('path')
-const Verifier = require("email-verifier")
-const config = require('config')
+// const Verifier = require("email-verifier")
+// const config = require('config')
 
 const app = express()
-const mailer = require('../private/nodemailer')
+// const mailer = require('../private/nodemailer')
 const Student = require('../models/Student')
 const Class = require('../models/Class')
-const { student } = require('../secret')
+const { student } = require('../common')
 const authUser = require('../middleware/authUser')
 
 // for body parser
@@ -126,9 +126,9 @@ router.post('/register', async (req, res) => {
         await user.save()
 
         // sending the mail
-        const subject = 'Welcome To SRM-GCR'
-        const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
-        mailer(email, subject, text)
+        // const subject = 'Welcome To SRM-GCR'
+        // const text = `Hello ${name}, thanks for using SRM-GCR. No Reply Mail`
+        // mailer(email, subject, text)
 
         // setting the session
         req.session.user = user

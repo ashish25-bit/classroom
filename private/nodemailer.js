@@ -1,4 +1,4 @@
-const transporter = require('./transporter')
+// const transporter = require('./transporter')
 const config = require('config')
 
 module.exports = async (mail, subject, text) => {
@@ -10,7 +10,7 @@ module.exports = async (mail, subject, text) => {
     }
 
     try {
-        await transporter.sendMail(mailOptions)
+        // await transporter.sendMail(mailOptions)
         return true
     } 
     catch (err) {

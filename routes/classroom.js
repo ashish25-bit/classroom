@@ -3,7 +3,7 @@ const router = express.Router()
 const path = require('path')
 
 const app = express()
-const { student, teacher } = require('../secret')
+const { student, teacher } = require('../common')
 const Class = require('../models/Class')
 
 // setting the static folder

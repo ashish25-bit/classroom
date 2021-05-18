@@ -4,6 +4,7 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const moment = require('moment')
+const uuid4 = require("uuid4")
 
 const subjects = require('../private/subjects')
 const Class = require('../models/Class')
@@ -14,8 +15,8 @@ const Student = require('../models/Student')
 const Sample = require('../models/Sample')
 const Assignment = require('../models/Assignment')
 const Submission = require('../models/Submission')
-const mailer = require('../private/nodemailer')
-const { student } = require('../secret')
+// const mailer = require('../private/nodemailer')
+const { student } = require('../common')
 
 // get the options for subject and subject code
 router.get('/code/subject/:semester/:dept', (req, res) => {
@@ -303,12 +304,15 @@ router.get('/class/details/:name', async (req, res) => {
 router.post('/document/upload', async (req, res) => {
     const { name } = req.query
     if (!fs.existsSync(`./public/documents/${name}`))
-        await fs.mkdirSync(`./public/documents/${name}`)
+        fs.mkdirSync(`./public/documents/${name}`)
 
+        
     let storage = multer.diskStorage({
         destination: `./public/documents/${name}`,
-        filename: (req, file, cb) => {
-            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
+        filename: (_req, file, cb) => {
+            let id = uuid4();
+            uuid4.valid(id)
+            cb(null, `${id}${path.extname(file.originalname)}`)
         }
     })
 
@@ -431,13 +435,16 @@ router.get('/get/group/messages/:name', async (req, res) => {
 
 router.post('/class/assignment', async (req, res) => {
     const { name } = req.query
-    if (!fs.existsSync(`./public/assignments/${name}`))
-        await fs.mkdirSync(`./public/assignments/${name}`)
+    if (!fs.existsSync(`./public/assignments/${name}`)) {
+        fs.mkdirSync(`./public/assignments/${name}`)
+    }
 
     let storage = multer.diskStorage({
         destination: `./public/assignments/${name}`,
         filename: (req, file, cb) => {
-            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
+            let id = uuid4();
+            uuid4.valid(id);
+            cb(null, `${id}${path.extname(file.originalname)}`)
         }
     })
 
@@ -464,8 +471,8 @@ router.post('/class/assignment', async (req, res) => {
                 students
             })
             await assignment.save()
-            const emails = await Student.find({ _id: { $in: students } }).distinct('email')
-            mailer(emails.toString(), `${cls.subject} Assignment`, `${title} is given as the assignment. Submission Date ${submissionDate}`)
+            // const emails = await Student.find({ _id: { $in: students } }).distinct('email')
+            // mailer(emails.toString(), `${cls.subject} Assignment`, `${title} is given as the assignment. Submission Date ${submissionDate}`)
             res.status(200).send('Assignment Posted')
         } 
         catch (err) {
@@ -479,12 +486,15 @@ router.post('/class/assignment', async (req, res) => {
 router.post('/submit/assignment/:name/:id', async (req, res) => {
     const { name, id } = req.params
     if (!fs.existsSync(`./public/submissions/${name}`))
-        await fs.mkdirSync(`./public/submissions/${name}`)
+        fs.mkdirSync(`./public/submissions/${name}`)
 
-    let storage = multer.diskStorage({
+        
+        let storage = multer.diskStorage({
         destination: `./public/submissions/${name}`,
-        filename: (req, file, cb) => {
-            cb(null, `${file.fieldname}-${new Date()}-(${Date.now()})${path.extname(file.originalname)}`)
+        filename: (_req, file, cb) => {
+            let uniqueId = uuid4();
+            uuid4.valid(uniqueId)
+            cb(null , `${uniqueId}${path.extname(file.originalname)}`);
         }
     })
 

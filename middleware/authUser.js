@@ -1,4 +1,4 @@
-const { student, teacher, teacherRoutes, studentRoutes } = require('../secret')
+const { student, teacher, teacherRoutes, studentRoutes } = require('../common')
 
 module.exports = (req, res, next) => {
     const { type } = req.session
