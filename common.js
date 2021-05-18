@@ -7,6 +7,8 @@ module.exports.teacherRoutes = [
     '/faculty/requests',
     '/faculty/request/',
     '/faculty/assignment///',
+    '/faculty/assignment/submission///',
+    '/faculty/assignment/submission////',
 ];
 
 module.exports.studentRoutes = [

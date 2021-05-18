@@ -1,0 +1,15 @@
+extends ../layouts/Layout
+block content
+    include ../layouts/HeaderTeacher
+    .single_assignment_con
+        .student_detail
+            h2 Loading...
+        <hr style='margin: 15px 0; border: 1px solid #ccc;' />
+        .details
+        .assignment_detail
+            //- h3 Submitted on: 18th May 2021, 08:16 PM
+            //- button(class="checked false") Checked
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+    script(src="js/teacher/checkAssignment.js" type='module')

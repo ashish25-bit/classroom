@@ -137,7 +137,7 @@ export function getAssignments(name) {
     axios.get(`/api/get/assignments/${name}`)
         .then(res => {
             assignment_container.innerHTML = ''
-
+            console.log(res.data)
             if (!res.data.length) {
                 assignment_container.innerHTML = '<h3>No Assignments</h3>'
                 return
@@ -180,7 +180,7 @@ export function getAssignmentId() {
     return [array[array.length - 2], array[array.length - 3]]
 }
 
-export function sendAssignmentTemplate({ attachments, class: cls, fileName, description, title, submissionDate, date }) {
+export function sendAssignmentTemplate({ attachments, class: cls, fileName, description, title, submissionDate, date }, show = true) {
     const Date = moment(submissionDate)
     let content = `<h1 style='font-size:1.7rem;'>
         <a title='Back to class' class='back_link' href='/classroom/${cls.name}'>
@@ -196,7 +196,7 @@ export function sendAssignmentTemplate({ attachments, class: cls, fileName, desc
         content += `<h4 class='head'>Description</h4> <div class='box'>${description}</div>`
 
     content +=  `<h4 class='head'>Submission Date</h4> <div class='box'>${Date.format('DD MMMM, YYYY')}</div>`
-    if (attachments.length) {
+    if (attachments.length && show) {
         content += `<h4 class='head'>Attachments</h4>`
         let attachmentContent = ''
         attachments.forEach((pic, index) => {

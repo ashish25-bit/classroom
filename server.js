@@ -41,6 +41,7 @@ app.use('/classroom/video/room/', express.static('public'))
 app.use('/classroom/assignment/', express.static('public'))
 app.use('/assignment/:name/:id', express.static('public'))
 app.use('/faculty/assignment/:name/:id', express.static('public'))
+app.use('/faculty/assignment/submission/:name/:id/:stud', express.static('public'))
 app.use('/assignment/', express.static('public'))
 
 //set template engine 

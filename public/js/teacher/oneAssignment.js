@@ -6,11 +6,16 @@ let all_students = []
 
 window.onload = () => {
     const [ id, name ] = getAssignmentId()
+
+    const href = window.location.href
+    let params = href.split('/');
+    while (params.length != 3 && params.length >= 0) params.shift();
+
     axios.get(`/api/faculty/single/assignment/${name}/${id}`)
         .then(res => {
             const { assignment, students } = res.data
             details.innerHTML = sendAssignmentTemplate(assignment)
-            let content = `<h2>All Students</h2><div class='assigned'><div class='students_con'>`
+            let content = `<h2>Assigned To</h2><div class='assigned'><div class='students_con'>`
             students.forEach(student => content += `<div>${student.regno}</div>`)
             content += '</div></div>'
             allStudents.innerHTML = content
@@ -36,24 +41,25 @@ window.onload = () => {
             }
             submissions.innerHTML = '<h2>Submissions</h2>'
             res.data.forEach(submission => {
+
                 const parent = document.createElement('div')
                 parent.classList.add('submission')
-                const { attachments, fileName, checked, status, student, submitted } = submission
-                const checkbox = document.createElement('input')
-                checkbox.type = 'checkbox'
-                checkbox.classList.add('status')
-                checkbox.checked = checked
-                parent.appendChild(checkbox)
-                parent.innerHTML += `<span style='margin-left: 15px; color: #555;'> 
-                    <b style='color: #000;'>${student.regno}</b> 
-                (${student.name})</span>
+                const { checked, status, student, submitted } = submission
+
+                const div = document.createElement('div');
+                div.innerText = checked ? 'Checked' : 'Not Checked';
+                const statusCls = checked ? 'done' : 'not-done';
+                div.classList.add(`checked_status`);
+                div.classList.add(statusCls);
+                parent.appendChild(div);
+
+                parent.innerHTML += `<a href="/faculty/assignment/submission/${params[0]}/${params[1]}/${student._id}" style='margin-left: s; color: #555;'> 
+                <b style='color: #000;'>${student.regno}</b> 
+                (${student.name})</a>
                 <p style='margin-top:10px;margin-bottom:5px; color: #555;'>${moment(submitted).format('Do MMM YYYY, hh:mm A')}</p>
                 <span class='${status ? 'on' : 'late'} time'>${status ? 'On Time' : 'Late Submission'}</span>`
                 submissions.appendChild(parent)
             })
-            document.querySelectorAll('.submission .status').forEach(
-                checkbox => checkbox.addEventListener('change', changeCheckedStatus)
-            )
         })
         .catch(err => {
             console.log(err)
@@ -67,6 +73,7 @@ window.onload = () => {
             }
         })
 }
-function changeCheckedStatus(e) {
-    console.log('checking')
-}
+
+// function changeCheckedStatus(e) {
+//     console.log('checking')
+// }

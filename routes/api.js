@@ -739,7 +739,11 @@ router.get('/submission/:name/:id', async (req, res) => {
         if (!cls)
             return res.status(404).send('Class not found')
 
-        const submission = await Submission.find({ $and: [{ class: cls._id }, { assignment: id }] })
+        const submission = await Submission.
+            find({ $and: [
+                { class: cls._id }, 
+                { assignment: id }
+            ]})
             .populate('student', ['regno', 'name'])
             .select(['-_id', '-assignment', '-class'])
         if (!submission)
@@ -751,6 +755,52 @@ router.get('/submission/:name/:id', async (req, res) => {
         if (err.kind === 'ObjectId')
             return res.status(400).send('Invalid Assignment Id')
         res.status(500).send('Error')
+    }
+})
+
+// get the submisson for checking
+router.get('/get/submission/checking/:name/:id/:stud', async(req, res) => {
+    if (!req.session.user) 
+        return res.send('Not Logged In')
+
+    try {
+        const { id, stud } = req.params;
+        const submission = await Submission
+        .findOne({
+            $and: [
+                { assignment: id },
+                { student: stud }
+            ]
+        })
+        .populate('student', ['name', 'regno', 'semester', 'department', 'section', 'batch'])
+
+        if (!submission) 
+            return res.status(404).send('No Submission Found');
+
+        res.status(200).json(submission);
+    }
+    catch (err) {
+        console.log(err)
+        if (err.kind === 'ObjectId')
+            return res.status(400).send('Assignemnt Id or Student Id');
+        res.status(500).send('Error');
+    }
+})
+
+router.post('/assignment/checked', async (req, res) => {
+    try {
+        const sub = await Submission.findOne({ _id: req.body.id });
+
+        if (!sub) 
+            return res.status(404).send('Submission not found');
+
+        sub.checked = true;
+        await sub.save();
+        
+        res.status(200).send('Checked');
+    }
+    catch (err) {
+        res.status(500).send('Server Error');
     }
 })
 

@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
         req.session.user = user
         req.session.type = teacher
-        res.redirect(`/faculty/home`)
+        res.redirect(`/faculty/assignment/submission/18MAB204T-CSE-A1-1-Batch1/60a3d3bd8494d542347a64e6/60a23a0c62b7792f44001b36/`)
     }
     catch (err) {
         console.log(err)
@@ -253,6 +253,22 @@ router.get('/assignment/:name/:id', authUser, (req, res) => {
         return res.redirect('/')
 
     res.render('faculty/Assignment', {
+        title: 'Assignment Page Faculty',
+        user: req.session.user
+    })
+})
+
+// get the each submission
+/**
+ * @param name: unique id of the class
+ * @param id: id of the assignment
+ * @param stud: student id
+ */
+router.get('/assignment/submission/:name/:id/:stud', authUser, async (req, res) => {
+    if (!req.session.user)
+        return res.redirect('/')
+
+    res.render('faculty/AssignmentSub', {
         title: 'Assignment Page Faculty',
         user: req.session.user
     })
